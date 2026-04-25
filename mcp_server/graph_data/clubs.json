@@ -1,0 +1,137 @@
+[
+  {
+    "CLUB_ID": 1,
+    "CLUB_NAME": "Real Madrid",
+    "COUNTRY": "Spain",
+    "LEAGUE": "La Liga",
+    "FOUNDED_YEAR": 1902,
+    "STADIUM": "Santiago Bernabéu",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 2,
+    "CLUB_NAME": "Manchester City",
+    "COUNTRY": "England",
+    "LEAGUE": "Premier League",
+    "FOUNDED_YEAR": 1880,
+    "STADIUM": "Etihad Stadium",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 3,
+    "CLUB_NAME": "Liverpool",
+    "COUNTRY": "England",
+    "LEAGUE": "Premier League",
+    "FOUNDED_YEAR": 1892,
+    "STADIUM": "Anfield",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 4,
+    "CLUB_NAME": "Paris Saint-Germain",
+    "COUNTRY": "France",
+    "LEAGUE": "Ligue 1",
+    "FOUNDED_YEAR": 1970,
+    "STADIUM": "Parc des Princes",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 5,
+    "CLUB_NAME": "Inter Miami CF",
+    "COUNTRY": "USA",
+    "LEAGUE": "MLS",
+    "FOUNDED_YEAR": 2018,
+    "STADIUM": "Chase Stadium",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 6,
+    "CLUB_NAME": "Al Nassr",
+    "COUNTRY": "Saudi Arabia",
+    "LEAGUE": "Saudi Pro League",
+    "FOUNDED_YEAR": 1955,
+    "STADIUM": "Al-Awwal Park",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 7,
+    "CLUB_NAME": "Bayern Munich",
+    "COUNTRY": "Germany",
+    "LEAGUE": "Bundesliga",
+    "FOUNDED_YEAR": 1900,
+    "STADIUM": "Allianz Arena",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 8,
+    "CLUB_NAME": "Arsenal",
+    "COUNTRY": "England",
+    "LEAGUE": "Premier League",
+    "FOUNDED_YEAR": 1886,
+    "STADIUM": "Emirates Stadium",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 9,
+    "CLUB_NAME": "Chelsea",
+    "COUNTRY": "England",
+    "LEAGUE": "Premier League",
+    "FOUNDED_YEAR": 1905,
+    "STADIUM": "Stamford Bridge",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 10,
+    "CLUB_NAME": "Barcelona",
+    "COUNTRY": "Spain",
+    "LEAGUE": "La Liga",
+    "FOUNDED_YEAR": 1899,
+    "STADIUM": "Camp Nou",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 11,
+    "CLUB_NAME": "Atletico Madrid",
+    "COUNTRY": "Spain",
+    "LEAGUE": "La Liga",
+    "FOUNDED_YEAR": 1903,
+    "STADIUM": "Wanda Metropolitano",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 12,
+    "CLUB_NAME": "AC Milan",
+    "COUNTRY": "Italy",
+    "LEAGUE": "Serie A",
+    "FOUNDED_YEAR": 1899,
+    "STADIUM": "San Siro",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 13,
+    "CLUB_NAME": "Juventus",
+    "COUNTRY": "Italy",
+    "LEAGUE": "Serie A",
+    "FOUNDED_YEAR": 1897,
+    "STADIUM": "Allianz Stadium",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 14,
+    "CLUB_NAME": "Inter Milan",
+    "COUNTRY": "Italy",
+    "LEAGUE": "Serie A",
+    "FOUNDED_YEAR": 1908,
+    "STADIUM": "San Siro",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CLUB_ID": 15,
+    "CLUB_NAME": "Borussia Dortmund",
+    "COUNTRY": "Germany",
+    "LEAGUE": "Bundesliga",
+    "FOUNDED_YEAR": 1909,
+    "STADIUM": "Signal Iduna Park",
+    "CREATED_AT": "2025-10-07"
+  }
+]

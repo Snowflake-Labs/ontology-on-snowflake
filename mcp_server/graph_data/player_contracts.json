@@ -1,0 +1,852 @@
+[
+  {
+    "CONTRACT_ID": 1,
+    "PERSON_ID": 1,
+    "CLUB_ID": 1,
+    "START_DATE": "2024-07-01",
+    "END_DATE": "2029-06-30",
+    "CONTRACT_VALUE": 45000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 2,
+    "PERSON_ID": 2,
+    "CLUB_ID": 2,
+    "START_DATE": "2022-07-01",
+    "END_DATE": "2027-06-30",
+    "CONTRACT_VALUE": 50000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 3,
+    "PERSON_ID": 3,
+    "CLUB_ID": 1,
+    "START_DATE": "2023-07-01",
+    "END_DATE": "2029-06-30",
+    "CONTRACT_VALUE": 40000000,
+    "JERSEY_NUMBER": 5,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 4,
+    "PERSON_ID": 4,
+    "CLUB_ID": 3,
+    "START_DATE": "2021-08-13",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 35000000,
+    "JERSEY_NUMBER": 4,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 5,
+    "PERSON_ID": 5,
+    "CLUB_ID": 5,
+    "START_DATE": "2023-07-15",
+    "END_DATE": "2025-12-31",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 6,
+    "PERSON_ID": 6,
+    "CLUB_ID": 6,
+    "START_DATE": "2023-01-01",
+    "END_DATE": "2025-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 7,
+    "PERSON_ID": 7,
+    "CLUB_ID": 2,
+    "START_DATE": "2015-08-30",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 40000000,
+    "JERSEY_NUMBER": 17,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 8,
+    "PERSON_ID": 8,
+    "CLUB_ID": 3,
+    "START_DATE": "2017-07-01",
+    "END_DATE": "2025-06-30",
+    "CONTRACT_VALUE": 35000000,
+    "JERSEY_NUMBER": 11,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 9,
+    "PERSON_ID": 9,
+    "CLUB_ID": 4,
+    "START_DATE": "2022-07-01",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 10,
+    "PERSON_ID": 10,
+    "CLUB_ID": 1,
+    "START_DATE": "2012-08-27",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 11,
+    "PERSON_ID": 11,
+    "CLUB_ID": 1,
+    "START_DATE": "2014-07-17",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 8,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 12,
+    "PERSON_ID": 12,
+    "CLUB_ID": 2,
+    "START_DATE": "2022-08-22",
+    "END_DATE": "2027-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 18,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 13,
+    "PERSON_ID": 13,
+    "CLUB_ID": 4,
+    "START_DATE": "2017-08-03",
+    "END_DATE": "2025-06-30",
+    "CONTRACT_VALUE": 40000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 15,
+    "PERSON_ID": 15,
+    "CLUB_ID": 7,
+    "START_DATE": "2022-07-19",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 35000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 16,
+    "PERSON_ID": 16,
+    "CLUB_ID": 10,
+    "START_DATE": "2020-09-02",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 8,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 17,
+    "PERSON_ID": 17,
+    "CLUB_ID": 10,
+    "START_DATE": "2021-08-31",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 6,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 18,
+    "PERSON_ID": 18,
+    "CLUB_ID": 10,
+    "START_DATE": "2019-07-01",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 21,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 19,
+    "PERSON_ID": 19,
+    "CLUB_ID": 11,
+    "START_DATE": "2019-07-14",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 20,
+    "PERSON_ID": 20,
+    "CLUB_ID": 11,
+    "START_DATE": "2014-07-16",
+    "END_DATE": "2028-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 13,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 21,
+    "PERSON_ID": 21,
+    "CLUB_ID": 11,
+    "START_DATE": "2011-08-31",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 6,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 22,
+    "PERSON_ID": 22,
+    "CLUB_ID": 4,
+    "START_DATE": "2023-09-01",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 11,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 23,
+    "PERSON_ID": 23,
+    "CLUB_ID": 12,
+    "START_DATE": "2019-08-01",
+    "END_DATE": "2028-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 17,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 24,
+    "PERSON_ID": 24,
+    "CLUB_ID": 12,
+    "START_DATE": "2019-07-06",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 19,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 25,
+    "PERSON_ID": 25,
+    "CLUB_ID": 12,
+    "START_DATE": "2021-05-27",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 16,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 26,
+    "PERSON_ID": 26,
+    "CLUB_ID": 14,
+    "START_DATE": "2018-07-01",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 27,
+    "PERSON_ID": 27,
+    "CLUB_ID": 14,
+    "START_DATE": "2019-07-12",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 23,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 28,
+    "PERSON_ID": 28,
+    "CLUB_ID": 14,
+    "START_DATE": "2018-01-31",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 32,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 29,
+    "PERSON_ID": 29,
+    "CLUB_ID": 13,
+    "START_DATE": "2022-01-28",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 30,
+    "PERSON_ID": 30,
+    "CLUB_ID": 13,
+    "START_DATE": "2020-10-05",
+    "END_DATE": "2025-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 31,
+    "PERSON_ID": 31,
+    "CLUB_ID": 13,
+    "START_DATE": "2021-08-18",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 5,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 32,
+    "PERSON_ID": 32,
+    "CLUB_ID": 15,
+    "START_DATE": "2021-07-23",
+    "END_DATE": "2026-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 33,
+    "PERSON_ID": 33,
+    "CLUB_ID": 15,
+    "START_DATE": "2012-07-01",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 11,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 34,
+    "PERSON_ID": 34,
+    "CLUB_ID": 15,
+    "START_DATE": "2019-07-01",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 15,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 35,
+    "PERSON_ID": 35,
+    "CLUB_ID": 8,
+    "START_DATE": "2019-07-01",
+    "END_DATE": "2027-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 36,
+    "PERSON_ID": 36,
+    "CLUB_ID": 8,
+    "START_DATE": "2021-01-27",
+    "END_DATE": "2028-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 8,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 37,
+    "PERSON_ID": 37,
+    "CLUB_ID": 8,
+    "START_DATE": "2023-07-15",
+    "END_DATE": "2030-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 41,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 38,
+    "PERSON_ID": 38,
+    "CLUB_ID": 8,
+    "START_DATE": "2019-07-25",
+    "END_DATE": "2027-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 2,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 39,
+    "PERSON_ID": 39,
+    "CLUB_ID": 9,
+    "START_DATE": "2023-09-01",
+    "END_DATE": "2030-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 20,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 40,
+    "PERSON_ID": 40,
+    "CLUB_ID": 9,
+    "START_DATE": "2023-01-31",
+    "END_DATE": "2031-06-30",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 5,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 41,
+    "PERSON_ID": 41,
+    "CLUB_ID": 9,
+    "START_DATE": "2023-07-05",
+    "END_DATE": "2030-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 42,
+    "PERSON_ID": 42,
+    "CLUB_ID": 9,
+    "START_DATE": "2019-07-01",
+    "END_DATE": "2028-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 24,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 101,
+    "PERSON_ID": 1,
+    "CLUB_ID": 4,
+    "START_DATE": "2017-08-31",
+    "END_DATE": "2024-06-30",
+    "CONTRACT_VALUE": 40000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 102,
+    "PERSON_ID": 2,
+    "CLUB_ID": 15,
+    "START_DATE": "2020-01-01",
+    "END_DATE": "2022-06-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 103,
+    "PERSON_ID": 3,
+    "CLUB_ID": 15,
+    "START_DATE": "2020-07-20",
+    "END_DATE": "2023-06-30",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 22,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 104,
+    "PERSON_ID": 5,
+    "CLUB_ID": 10,
+    "START_DATE": "2004-07-01",
+    "END_DATE": "2021-08-10",
+    "CONTRACT_VALUE": 50000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 105,
+    "PERSON_ID": 6,
+    "CLUB_ID": 1,
+    "START_DATE": "2009-07-01",
+    "END_DATE": "2018-07-10",
+    "CONTRACT_VALUE": 45000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 106,
+    "PERSON_ID": 6,
+    "CLUB_ID": 8,
+    "START_DATE": "2003-08-12",
+    "END_DATE": "2009-06-30",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 107,
+    "PERSON_ID": 7,
+    "CLUB_ID": 9,
+    "START_DATE": "2012-01-31",
+    "END_DATE": "2015-08-30",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 14,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 108,
+    "PERSON_ID": 7,
+    "CLUB_ID": 15,
+    "START_DATE": "2015-08-30",
+    "END_DATE": "2015-08-30",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 14,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 109,
+    "PERSON_ID": 8,
+    "CLUB_ID": 9,
+    "START_DATE": "2014-01-26",
+    "END_DATE": "2017-06-30",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 15,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 110,
+    "PERSON_ID": 8,
+    "CLUB_ID": 13,
+    "START_DATE": "2015-08-06",
+    "END_DATE": "2017-06-30",
+    "CONTRACT_VALUE": 12000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 111,
+    "PERSON_ID": 8,
+    "CLUB_ID": 13,
+    "START_DATE": "2016-08-31",
+    "END_DATE": "2017-06-30",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 112,
+    "PERSON_ID": 9,
+    "CLUB_ID": 3,
+    "START_DATE": "2016-06-28",
+    "END_DATE": "2022-06-30",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 113,
+    "PERSON_ID": 9,
+    "CLUB_ID": 8,
+    "START_DATE": "2014-09-01",
+    "END_DATE": "2016-06-30",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 19,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 114,
+    "PERSON_ID": 10,
+    "CLUB_ID": 12,
+    "START_DATE": "2010-08-26",
+    "END_DATE": "2012-08-27",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 14,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 115,
+    "PERSON_ID": 11,
+    "CLUB_ID": 15,
+    "START_DATE": "2007-01-31",
+    "END_DATE": "2014-07-17",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 39,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 116,
+    "PERSON_ID": 12,
+    "CLUB_ID": 1,
+    "START_DATE": "2013-01-31",
+    "END_DATE": "2022-08-22",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 14,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 117,
+    "PERSON_ID": 13,
+    "CLUB_ID": 10,
+    "START_DATE": "2013-07-03",
+    "END_DATE": "2017-08-03",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 11,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 118,
+    "PERSON_ID": 15,
+    "CLUB_ID": 10,
+    "START_DATE": "2014-07-09",
+    "END_DATE": "2022-07-19",
+    "CONTRACT_VALUE": 30000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 119,
+    "PERSON_ID": 15,
+    "CLUB_ID": 15,
+    "START_DATE": "2010-07-01",
+    "END_DATE": "2014-07-09",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 120,
+    "PERSON_ID": 18,
+    "CLUB_ID": 15,
+    "START_DATE": "2016-08-31",
+    "END_DATE": "2019-07-01",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 21,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 121,
+    "PERSON_ID": 19,
+    "CLUB_ID": 10,
+    "START_DATE": "2014-07-28",
+    "END_DATE": "2019-07-14",
+    "CONTRACT_VALUE": 25000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 122,
+    "PERSON_ID": 19,
+    "CLUB_ID": 11,
+    "START_DATE": "2011-07-27",
+    "END_DATE": "2014-07-28",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 123,
+    "PERSON_ID": 22,
+    "CLUB_ID": 10,
+    "START_DATE": "2019-07-03",
+    "END_DATE": "2023-09-01",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 124,
+    "PERSON_ID": 22,
+    "CLUB_ID": 11,
+    "START_DATE": "2019-07-03",
+    "END_DATE": "2023-09-01",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 125,
+    "PERSON_ID": 23,
+    "CLUB_ID": 10,
+    "START_DATE": "2018-08-09",
+    "END_DATE": "2019-08-01",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 17,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 126,
+    "PERSON_ID": 24,
+    "CLUB_ID": 10,
+    "START_DATE": "2017-07-12",
+    "END_DATE": "2019-07-06",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 19,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 127,
+    "PERSON_ID": 25,
+    "CLUB_ID": 12,
+    "START_DATE": "2015-07-01",
+    "END_DATE": "2021-05-27",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 16,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 128,
+    "PERSON_ID": 26,
+    "CLUB_ID": 12,
+    "START_DATE": "2018-07-01",
+    "END_DATE": "2018-07-01",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 10,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 129,
+    "PERSON_ID": 27,
+    "CLUB_ID": 12,
+    "START_DATE": "2017-07-12",
+    "END_DATE": "2019-07-12",
+    "CONTRACT_VALUE": 12000000,
+    "JERSEY_NUMBER": 23,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 130,
+    "PERSON_ID": 28,
+    "CLUB_ID": 12,
+    "START_DATE": "2016-07-01",
+    "END_DATE": "2018-01-31",
+    "CONTRACT_VALUE": 8000000,
+    "JERSEY_NUMBER": 32,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 131,
+    "PERSON_ID": 29,
+    "CLUB_ID": 13,
+    "START_DATE": "2018-07-01",
+    "END_DATE": "2022-01-28",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 9,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 132,
+    "PERSON_ID": 30,
+    "CLUB_ID": 13,
+    "START_DATE": "2016-07-01",
+    "END_DATE": "2020-10-05",
+    "CONTRACT_VALUE": 12000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 133,
+    "PERSON_ID": 31,
+    "CLUB_ID": 13,
+    "START_DATE": "2018-07-01",
+    "END_DATE": "2021-08-18",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 5,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 134,
+    "PERSON_ID": 32,
+    "CLUB_ID": 8,
+    "START_DATE": "2017-07-01",
+    "END_DATE": "2021-07-23",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 135,
+    "PERSON_ID": 33,
+    "CLUB_ID": 15,
+    "START_DATE": "2009-07-01",
+    "END_DATE": "2012-07-01",
+    "CONTRACT_VALUE": 8000000,
+    "JERSEY_NUMBER": 11,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 136,
+    "PERSON_ID": 34,
+    "CLUB_ID": 15,
+    "START_DATE": "2008-07-01",
+    "END_DATE": "2019-07-01",
+    "CONTRACT_VALUE": 12000000,
+    "JERSEY_NUMBER": 15,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 137,
+    "PERSON_ID": 35,
+    "CLUB_ID": 8,
+    "START_DATE": "2018-07-01",
+    "END_DATE": "2019-07-01",
+    "CONTRACT_VALUE": 5000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 138,
+    "PERSON_ID": 36,
+    "CLUB_ID": 1,
+    "START_DATE": "2015-01-16",
+    "END_DATE": "2021-01-27",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 8,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 139,
+    "PERSON_ID": 37,
+    "CLUB_ID": 8,
+    "START_DATE": "2014-07-01",
+    "END_DATE": "2023-07-15",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 41,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 140,
+    "PERSON_ID": 38,
+    "CLUB_ID": 8,
+    "START_DATE": "2016-07-01",
+    "END_DATE": "2019-07-25",
+    "CONTRACT_VALUE": 8000000,
+    "JERSEY_NUMBER": 2,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 141,
+    "PERSON_ID": 39,
+    "CLUB_ID": 8,
+    "START_DATE": "2010-07-01",
+    "END_DATE": "2023-09-01",
+    "CONTRACT_VALUE": 15000000,
+    "JERSEY_NUMBER": 20,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 142,
+    "PERSON_ID": 40,
+    "CLUB_ID": 8,
+    "START_DATE": "2019-07-01",
+    "END_DATE": "2023-01-31",
+    "CONTRACT_VALUE": 20000000,
+    "JERSEY_NUMBER": 5,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 143,
+    "PERSON_ID": 41,
+    "CLUB_ID": 8,
+    "START_DATE": "2005-07-01",
+    "END_DATE": "2023-07-05",
+    "CONTRACT_VALUE": 18000000,
+    "JERSEY_NUMBER": 7,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "CONTRACT_ID": 144,
+    "PERSON_ID": 42,
+    "CLUB_ID": 8,
+    "START_DATE": "2018-07-01",
+    "END_DATE": "2019-07-01",
+    "CONTRACT_VALUE": 10000000,
+    "JERSEY_NUMBER": 24,
+    "CREATED_AT": "2025-10-07"
+  }
+]

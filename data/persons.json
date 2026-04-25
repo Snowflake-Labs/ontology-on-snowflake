@@ -1,0 +1,470 @@
+[
+  {
+    "PERSON_ID": 1,
+    "NAME": "Kylian Mbappé",
+    "NATIONALITY": "France",
+    "DATE_OF_BIRTH": "1998-12-20",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 2,
+    "NAME": "Erling Haaland",
+    "NATIONALITY": "Norway",
+    "DATE_OF_BIRTH": "2000-07-21",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 3,
+    "NAME": "Jude Bellingham",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "2003-06-29",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 4,
+    "NAME": "Virgil van Dijk",
+    "NATIONALITY": "Netherlands",
+    "DATE_OF_BIRTH": "1991-07-08",
+    "ROLE": "PLAYER",
+    "POSITION": "Defender",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 5,
+    "NAME": "Lionel Messi",
+    "NATIONALITY": "Argentina",
+    "DATE_OF_BIRTH": "1987-06-24",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 6,
+    "NAME": "Cristiano Ronaldo",
+    "NATIONALITY": "Portugal",
+    "DATE_OF_BIRTH": "1985-02-05",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 7,
+    "NAME": "Kevin De Bruyne",
+    "NATIONALITY": "Belgium",
+    "DATE_OF_BIRTH": "1991-06-28",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 8,
+    "NAME": "Mohamed Salah",
+    "NATIONALITY": "Egypt",
+    "DATE_OF_BIRTH": "1992-06-15",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 9,
+    "NAME": "Sadio Mané",
+    "NATIONALITY": "Senegal",
+    "DATE_OF_BIRTH": "1992-04-10",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 10,
+    "NAME": "Luka Modrić",
+    "NATIONALITY": "Croatia",
+    "DATE_OF_BIRTH": "1985-09-09",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 11,
+    "NAME": "Toni Kroos",
+    "NATIONALITY": "Germany",
+    "DATE_OF_BIRTH": "1990-01-04",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 12,
+    "NAME": "Casemiro",
+    "NATIONALITY": "Brazil",
+    "DATE_OF_BIRTH": "1992-02-23",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 13,
+    "NAME": "Neymar Jr",
+    "NATIONALITY": "Brazil",
+    "DATE_OF_BIRTH": "1992-02-05",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 15,
+    "NAME": "Robert Lewandowski",
+    "NATIONALITY": "Poland",
+    "DATE_OF_BIRTH": "1988-08-21",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 16,
+    "NAME": "Pedri",
+    "NATIONALITY": "Spain",
+    "DATE_OF_BIRTH": "2002-11-25",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 17,
+    "NAME": "Gavi",
+    "NATIONALITY": "Spain",
+    "DATE_OF_BIRTH": "2004-08-05",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 18,
+    "NAME": "Frenkie de Jong",
+    "NATIONALITY": "Netherlands",
+    "DATE_OF_BIRTH": "1997-05-12",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 19,
+    "NAME": "Antoine Griezmann",
+    "NATIONALITY": "France",
+    "DATE_OF_BIRTH": "1991-03-21",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 20,
+    "NAME": "Jan Oblak",
+    "NATIONALITY": "Slovenia",
+    "DATE_OF_BIRTH": "1993-01-07",
+    "ROLE": "PLAYER",
+    "POSITION": "Goalkeeper",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 21,
+    "NAME": "Koke",
+    "NATIONALITY": "Spain",
+    "DATE_OF_BIRTH": "1992-01-08",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 22,
+    "NAME": "João Félix",
+    "NATIONALITY": "Portugal",
+    "DATE_OF_BIRTH": "1999-11-10",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 23,
+    "NAME": "Rafael Leão",
+    "NATIONALITY": "Portugal",
+    "DATE_OF_BIRTH": "1999-06-10",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 24,
+    "NAME": "Theo Hernández",
+    "NATIONALITY": "France",
+    "DATE_OF_BIRTH": "1997-10-06",
+    "ROLE": "PLAYER",
+    "POSITION": "Defender",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 25,
+    "NAME": "Mike Maignan",
+    "NATIONALITY": "France",
+    "DATE_OF_BIRTH": "1995-07-03",
+    "ROLE": "PLAYER",
+    "POSITION": "Goalkeeper",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 26,
+    "NAME": "Lautaro Martínez",
+    "NATIONALITY": "Argentina",
+    "DATE_OF_BIRTH": "1997-08-22",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 27,
+    "NAME": "Nicolò Barella",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1997-02-07",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 28,
+    "NAME": "Federico Dimarco",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1997-11-10",
+    "ROLE": "PLAYER",
+    "POSITION": "Defender",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 29,
+    "NAME": "Dusan Vlahović",
+    "NATIONALITY": "Serbia",
+    "DATE_OF_BIRTH": "2000-01-28",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 30,
+    "NAME": "Federico Chiesa",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1997-10-25",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 31,
+    "NAME": "Manuel Locatelli",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1998-01-08",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 32,
+    "NAME": "Jadon Sancho",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "2000-03-25",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 33,
+    "NAME": "Marco Reus",
+    "NATIONALITY": "Germany",
+    "DATE_OF_BIRTH": "1989-05-31",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 34,
+    "NAME": "Mats Hummels",
+    "NATIONALITY": "Germany",
+    "DATE_OF_BIRTH": "1988-12-16",
+    "ROLE": "PLAYER",
+    "POSITION": "Defender",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 35,
+    "NAME": "Bukayo Saka",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "2001-09-05",
+    "ROLE": "PLAYER",
+    "POSITION": "Forward",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 36,
+    "NAME": "Martin Ødegaard",
+    "NATIONALITY": "Norway",
+    "DATE_OF_BIRTH": "1998-12-17",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 37,
+    "NAME": "Declan Rice",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "1999-01-14",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 38,
+    "NAME": "William Saliba",
+    "NATIONALITY": "France",
+    "DATE_OF_BIRTH": "2001-03-24",
+    "ROLE": "PLAYER",
+    "POSITION": "Defender",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 39,
+    "NAME": "Cole Palmer",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "2002-05-06",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 40,
+    "NAME": "Enzo Fernández",
+    "NATIONALITY": "Argentina",
+    "DATE_OF_BIRTH": "2001-01-17",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 41,
+    "NAME": "Mason Mount",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "1999-01-10",
+    "ROLE": "PLAYER",
+    "POSITION": "Midfielder",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 42,
+    "NAME": "Reece James",
+    "NATIONALITY": "England",
+    "DATE_OF_BIRTH": "1999-12-08",
+    "ROLE": "PLAYER",
+    "POSITION": "Defender",
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 101,
+    "NAME": "Carlo Ancelotti",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1959-06-10",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 102,
+    "NAME": "Pep Guardiola",
+    "NATIONALITY": "Spain",
+    "DATE_OF_BIRTH": "1971-01-18",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 103,
+    "NAME": "Arne Slot",
+    "NATIONALITY": "Netherlands",
+    "DATE_OF_BIRTH": "1978-09-17",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 104,
+    "NAME": "Mikel Arteta",
+    "NATIONALITY": "Spain",
+    "DATE_OF_BIRTH": "1982-03-26",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 105,
+    "NAME": "Mauricio Pochettino",
+    "NATIONALITY": "Argentina",
+    "DATE_OF_BIRTH": "1972-03-02",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 106,
+    "NAME": "Xavi Hernández",
+    "NATIONALITY": "Spain",
+    "DATE_OF_BIRTH": "1980-01-25",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 107,
+    "NAME": "Diego Simeone",
+    "NATIONALITY": "Argentina",
+    "DATE_OF_BIRTH": "1970-04-28",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 108,
+    "NAME": "Stefano Pioli",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1965-10-20",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 109,
+    "NAME": "Massimiliano Allegri",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1967-08-11",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 110,
+    "NAME": "Simone Inzaghi",
+    "NATIONALITY": "Italy",
+    "DATE_OF_BIRTH": "1976-04-05",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  },
+  {
+    "PERSON_ID": 111,
+    "NAME": "Edin Terzić",
+    "NATIONALITY": "Germany",
+    "DATE_OF_BIRTH": "1982-10-30",
+    "ROLE": "COACH",
+    "POSITION": null,
+    "CREATED_AT": "2025-10-07"
+  }
+]

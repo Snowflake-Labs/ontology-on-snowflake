@@ -1,0 +1,41 @@
+# Copyright 2026 Snowflake Inc.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+spec:
+  containers:
+  - name: mcp-server
+    image: XXXXXX.registry.snowflakecomputing.com/ontology_db/soccer_kg/soccer_graph_analytics_repo/soccer_mcp_server:latest  # Replace XXXXXX with your Snowflake account identifier
+    command:
+      - python
+      - soccer_mcp_server.py
+    env:
+      MCP_SERVER_NAME: "soccer-graph-analytics"
+      MCP_SERVER_VERSION: "1.0.0"
+      PRELOAD_ON_STARTUP: "true"
+      MCP_TRANSPORT: "http"
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: 1
+      limits:
+        memory: 4Gi
+        cpu: 2
+    readinessProbe:
+      port: 5000
+      path: /health
+  endpoints:
+  - name: graph-api
+    port: 5000
+    public: false

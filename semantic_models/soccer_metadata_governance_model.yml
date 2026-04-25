@@ -1,0 +1,1732 @@
+# Copyright 2026 Snowflake Inc.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: soccer_metadata_governance
+description: Soccer ontology metadata and data governance model - enables introspection of ontology structure, permissions, data quality, and available capabilities
+tables:
+  # =====================================================
+  # ONTOLOGY REGISTRY
+  # =====================================================
+  - name: ONT_ONTOLOGY
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_ONTOLOGY
+    description: "Ontology registry - tracks all ontologies with versioning"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Unique ontology identifier
+      - name: VERSION
+        expr: VERSION
+        data_type: STRING
+        description: Ontology version
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Ontology description
+      - name: DEFAULT_SCHEMA
+        expr: DEFAULT_SCHEMA
+        data_type: STRING
+        description: Default schema for this ontology
+      - name: CREATED_BY
+        expr: CREATED_BY
+        data_type: STRING
+        description: Who created this ontology
+      - name: IS_ACTIVE
+        expr: IS_ACTIVE
+        data_type: BOOLEAN
+        description: Whether this ontology is active
+    time_dimensions:
+      - name: CREATED_AT
+        expr: CREATED_AT
+        data_type: TIMESTAMP
+        description: When ontology was created
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+
+  - name: ONT_OBJECT_SOURCE
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_OBJECT_SOURCE
+    description: "Maps object types to their source tables with column mappings"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology name
+      - name: OBJ_TYPE
+        expr: OBJ_TYPE
+        data_type: STRING
+        description: Object type name (e.g., Player, Coach, Club)
+        synonyms:
+          - class_name
+          - object_type
+          - entity_type
+      - name: SOURCE_TABLE
+        expr: SOURCE_TABLE
+        data_type: STRING
+        description: Source table name (e.g., KG_NODE)
+        synonyms:
+          - source
+          - table_name
+      - name: FILTER_SQL
+        expr: FILTER_SQL
+        data_type: STRING
+        description: SQL filter expression (e.g., NODE_TYPE = 'PLAYER')
+        synonyms:
+          - filter
+          - where_clause
+      - name: MAPPING
+        expr: MAPPING
+        data_type: VARIANT
+        description: JSON mapping of source columns to properties
+        synonyms:
+          - column_mapping
+          - field_mapping
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+        - OBJ_TYPE
+        - SOURCE_TABLE
+
+  - name: ONT_LINK_SOURCE
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_LINK_SOURCE
+    description: "Maps link types to their source tables with column mappings"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology name
+      - name: LINK_TYPE
+        expr: LINK_TYPE
+        data_type: STRING
+        description: Link type name (e.g., PLAYS_FOR, COACHES)
+        synonyms:
+          - rel_name
+          - relationship_type
+          - edge_type
+      - name: SOURCE_TABLE
+        expr: SOURCE_TABLE
+        data_type: STRING
+        description: Source table name (e.g., KG_EDGE)
+        synonyms:
+          - source
+          - table_name
+      - name: FILTER_SQL
+        expr: FILTER_SQL
+        data_type: STRING
+        description: SQL filter expression (e.g., EDGE_TYPE = 'PLAYS_FOR')
+        synonyms:
+          - filter
+          - where_clause
+      - name: MAPPING
+        expr: MAPPING
+        data_type: VARIANT
+        description: JSON mapping of source columns to properties
+        synonyms:
+          - column_mapping
+          - field_mapping
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+        - LINK_TYPE
+        - SOURCE_TABLE
+
+  # =====================================================
+  # OBJECT TYPE DEFINITIONS
+  # =====================================================
+  - name: ONT_CLASS
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_CLASS
+    description: "Object type definitions with class hierarchy"
+    dimensions:
+      - name: CLASS_NAME
+        expr: CLASS_NAME
+        data_type: STRING
+        description: Object type name
+        synonyms:
+          - type_name
+          - object_type
+      - name: PARENT_CLASS_NAME
+        expr: PARENT_CLASS_NAME
+        data_type: STRING
+        description: Parent class name (for inheritance)
+      - name: IS_ABSTRACT
+        expr: IS_ABSTRACT
+        data_type: BOOLEAN
+        description: Whether this is an abstract class
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Object type description
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology this class belongs to
+      - name: TYPE_CLASS
+        expr: TYPE_CLASS
+        data_type: STRING
+        description: Type classification (ANALYTICAL, OPERATIONAL)
+        sample_values:
+          - ANALYTICAL
+          - OPERATIONAL
+      - name: STATUS
+        expr: STATUS
+        data_type: STRING
+        description: Class status (ACTIVE, DEPRECATED, EXPERIMENTAL)
+        sample_values:
+          - ACTIVE
+          - DEPRECATED
+          - EXPERIMENTAL
+    time_dimensions:
+      - name: TS_CREATED
+        expr: TS_CREATED
+        data_type: TIMESTAMP
+        description: When class was created
+    primary_key:
+      columns:
+        - CLASS_NAME
+
+  - name: ONT_PROPERTY
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_PROPERTY
+    description: "Properties for each object type"
+    dimensions:
+      - name: CLASS_NAME
+        expr: CLASS_NAME
+        data_type: STRING
+        description: Object type this property belongs to
+      - name: PROP_NAME
+        expr: PROP_NAME
+        data_type: STRING
+        description: Property name
+      - name: DATA_TYPE
+        expr: DATA_TYPE
+        data_type: STRING
+        description: Property data type (STRING, NUMBER, DATE, etc.)
+      - name: SHARED_PROP_NAME
+        expr: SHARED_PROP_NAME
+        data_type: STRING
+        description: Reference to shared property (if any)
+      - name: IS_REQUIRED
+        expr: IS_REQUIRED
+        data_type: BOOLEAN
+        description: Whether property is required
+      - name: IS_INDEXED
+        expr: IS_INDEXED
+        data_type: BOOLEAN
+        description: Whether property is indexed
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Property description
+    primary_key:
+      columns:
+        - CLASS_NAME
+        - PROP_NAME
+
+  - name: ONT_SHARED_PROPERTY
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_SHARED_PROPERTY
+    description: "Shared properties reusable across multiple object types"
+    dimensions:
+      - name: SHARED_PROP_NAME
+        expr: SHARED_PROP_NAME
+        data_type: STRING
+        description: Shared property name (e.g., name, country)
+      - name: BASE_TYPE
+        expr: BASE_TYPE
+        data_type: STRING
+        description: Base data type
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Property description
+      - name: DEFAULT_FORMAT
+        expr: DEFAULT_FORMAT
+        data_type: STRING
+        description: Default format specification
+    primary_key:
+      columns:
+        - SHARED_PROP_NAME
+
+  - name: ONT_DERIVED_PROPERTY
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_DERIVED_PROPERTY
+    description: "Computed/derived properties with their definitions"
+    dimensions:
+      - name: CLASS_NAME
+        expr: CLASS_NAME
+        data_type: STRING
+        description: Object type this derived property belongs to
+      - name: PROP_NAME
+        expr: PROP_NAME
+        data_type: STRING
+        description: Derived property name
+      - name: DEFINITION_KIND
+        expr: DEFINITION_KIND
+        data_type: STRING
+        description: How property is computed (SQL, FUNCTION)
+        sample_values:
+          - SQL
+          - FUNCTION
+      - name: SQL_EXPR
+        expr: SQL_EXPR
+        data_type: STRING
+        description: SQL expression for computation (if DEFINITION_KIND=SQL)
+      - name: FUNCTION_NAME
+        expr: FUNCTION_NAME
+        data_type: STRING
+        description: Function name (if DEFINITION_KIND=FUNCTION)
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Property description
+    primary_key:
+      columns:
+        - CLASS_NAME
+        - PROP_NAME
+
+  # =====================================================
+  # LINK TYPE DEFINITIONS
+  # =====================================================
+  - name: ONT_RELATION_DEF
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_RELATION_DEF
+    description: "Link type definitions with cardinality and constraints"
+    dimensions:
+      - name: REL_NAME
+        expr: REL_NAME
+        data_type: STRING
+        description: Relationship name
+        synonyms:
+          - link_type
+          - relationship_type
+      - name: DOMAIN_CLASS
+        expr: DOMAIN_CLASS
+        data_type: STRING
+        description: Source object type
+      - name: RANGE_CLASS
+        expr: RANGE_CLASS
+        data_type: STRING
+        description: Target object type
+      - name: CARDINALITY
+        expr: CARDINALITY
+        data_type: STRING
+        description: Cardinality constraint (N:1, 1:N, N:N, 1:1)
+        sample_values:
+          - "N:1"
+          - "1:N"
+          - "N:N"
+          - "1:1"
+      - name: IS_HIERARCHICAL
+        expr: IS_HIERARCHICAL
+        data_type: BOOLEAN
+        description: Whether relation is hierarchical
+      - name: INVERSE_REL_NAME
+        expr: INVERSE_REL_NAME
+        data_type: STRING
+        description: Inverse relationship name
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Relationship description
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology this relation belongs to
+      - name: STATUS
+        expr: STATUS
+        data_type: STRING
+        description: Relation status
+        sample_values:
+          - ACTIVE
+          - DEPRECATED
+      - name: RENDER_HINT
+        expr: RENDER_HINT
+        data_type: STRING
+        description: UI rendering hint (directed, undirected, hierarchical)
+    primary_key:
+      columns:
+        - REL_NAME
+
+  # =====================================================
+  # INTERFACES (Polymorphism)
+  # =====================================================
+  - name: ONT_INTERFACE
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_INTERFACE
+    description: "Interface definitions for polymorphism"
+    dimensions:
+      - name: INTERFACE_NAME
+        expr: INTERFACE_NAME
+        data_type: STRING
+        description: Interface name (e.g., PERSON, COMPETITION_MEMBER)
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Interface description
+    primary_key:
+      columns:
+        - INTERFACE_NAME
+
+  - name: ONT_INTERFACE_PROPERTY
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_INTERFACE_PROPERTY
+    description: "Properties required by each interface"
+    dimensions:
+      - name: INTERFACE_NAME
+        expr: INTERFACE_NAME
+        data_type: STRING
+        description: Interface name
+      - name: PROP_NAME
+        expr: PROP_NAME
+        data_type: STRING
+        description: Property name
+      - name: SHARED_PROP_NAME
+        expr: SHARED_PROP_NAME
+        data_type: STRING
+        description: Link to shared property
+    primary_key:
+      columns:
+        - INTERFACE_NAME
+        - PROP_NAME
+
+  - name: ONT_INTERFACE_IMPL
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_INTERFACE_IMPL
+    description: "Maps which classes implement which interfaces"
+    dimensions:
+      - name: INTERFACE_NAME
+        expr: INTERFACE_NAME
+        data_type: STRING
+        description: Interface name
+      - name: CLASS_NAME
+        expr: CLASS_NAME
+        data_type: STRING
+        description: Class that implements this interface
+    primary_key:
+      columns:
+        - INTERFACE_NAME
+        - CLASS_NAME
+
+  # =====================================================
+  # ACTION TYPES
+  # =====================================================
+  - name: ACT_TYPE
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ACT_TYPE
+    description: "Action type definitions - operations that can be performed on objects"
+    dimensions:
+      - name: ACTION_TYPE_ID
+        expr: ACTION_TYPE_ID
+        data_type: STRING
+        description: Action type identifier
+      - name: ACTION_NAME
+        expr: ACTION_NAME
+        data_type: STRING
+        description: Action name (e.g., REQUEST_TRANSFER, SIGN_CONTRACT)
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Action description
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology this action belongs to
+      - name: TARGET_CLASS
+        expr: TARGET_CLASS
+        data_type: STRING
+        description: Object type this action applies to
+      - name: HANDLER_PROC
+        expr: HANDLER_PROC
+        data_type: STRING
+        description: Stored procedure that handles this action
+      - name: IS_ENABLED
+        expr: IS_ENABLED
+        data_type: BOOLEAN
+        description: Whether action is currently enabled
+    time_dimensions:
+      - name: TS_CREATED
+        expr: TS_CREATED
+        data_type: TIMESTAMP
+        description: When action was created
+    primary_key:
+      columns:
+        - ACTION_TYPE_ID
+
+  - name: ACT_DEF
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ACT_DEF
+    description: "Action parameter definitions"
+    dimensions:
+      - name: ACTION_TYPE_ID
+        expr: ACTION_TYPE_ID
+        data_type: STRING
+        description: Action type identifier
+      - name: PARAM_NAME
+        expr: PARAM_NAME
+        data_type: STRING
+        description: Parameter name
+      - name: PARAM_TYPE
+        expr: PARAM_TYPE
+        data_type: STRING
+        description: Parameter data type (STRING, NUMBER, DATE, BOOLEAN)
+      - name: IS_REQUIRED
+        expr: IS_REQUIRED
+        data_type: BOOLEAN
+        description: Whether parameter is required
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Parameter description
+    primary_key:
+      columns:
+        - ACTION_TYPE_ID
+        - PARAM_NAME
+
+  # =====================================================
+  # FUNCTIONS CATALOG
+  # =====================================================
+  - name: ONT_FUNCTION
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_FUNCTION
+    description: "Function catalog - analytical and transformation functions"
+    dimensions:
+      - name: FUNCTION_NAME
+        expr: FUNCTION_NAME
+        data_type: STRING
+        description: Function name (e.g., compute_player_age, calculate_xg)
+      - name: VERSION
+        expr: VERSION
+        data_type: STRING
+        description: Function version
+      - name: LANGUAGE
+        expr: LANGUAGE
+        data_type: STRING
+        description: Implementation language (SQL, PYTHON, JS, EXTERNAL)
+        sample_values:
+          - SQL
+          - PYTHON
+          - JS
+          - EXTERNAL
+      - name: SNOWFLAKE_REF
+        expr: SNOWFLAKE_REF
+        data_type: STRING
+        description: Snowflake function reference
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Function description
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology this function belongs to
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+        - FUNCTION_NAME
+        - VERSION
+
+  - name: ONT_FUNCTION_BINDING
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_FUNCTION_BINDING
+    description: "Function bindings to object types, link types, and actions"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology name
+      - name: FUNCTION_NAME
+        expr: FUNCTION_NAME
+        data_type: STRING
+        description: Function name
+      - name: VERSION
+        expr: VERSION
+        data_type: STRING
+        description: Function version
+      - name: BOUND_TO_KIND
+        expr: BOUND_TO_KIND
+        data_type: STRING
+        description: What kind of element function is bound to
+        sample_values:
+          - OBJECT_TYPE
+          - LINK_TYPE
+          - ACTION_TYPE
+      - name: BOUND_TO_NAME
+        expr: BOUND_TO_NAME
+        data_type: STRING
+        description: Name of element function is bound to
+
+  # =====================================================
+  # OBJECT VIEWS (UI Configuration)
+  # =====================================================
+  - name: OBJ_VIEW_DEF
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: OBJ_VIEW_DEF
+    description: "Object view definitions for UI presentation and governance"
+    dimensions:
+      - name: OBJ_TYPE
+        expr: OBJ_TYPE
+        data_type: STRING
+        description: Object type (e.g., Player, Coach, Club)
+        synonyms:
+          - class_name
+          - object_type
+          - entity_type
+      - name: VIEW_NAME
+        expr: VIEW_NAME
+        data_type: STRING
+        description: Logical view name (e.g., V_PLAYER)
+        synonyms:
+          - view_identifier
+          - view_id
+      - name: CREATED_BY
+        expr: CREATED_BY
+        data_type: STRING
+        description: Creator of the view definition
+        synonyms:
+          - author
+          - owner
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Description of the view
+      - name: DISPLAY_COLS
+        expr: DISPLAY_COLS
+        data_type: VARIANT
+        description: Array of columns to display
+        synonyms:
+          - columns
+          - fields
+      - name: VERSION
+        expr: VERSION
+        data_type: STRING
+        description: View version
+      - name: STATUS
+        expr: STATUS
+        data_type: STRING
+        description: View status
+        sample_values:
+          - ACTIVE
+          - DEPRECATED
+    time_dimensions:
+      - name: TS_CREATED
+        expr: TS_CREATED
+        data_type: TIMESTAMP
+        description: When view definition was created
+    primary_key:
+      columns:
+        - OBJ_TYPE
+        - VIEW_NAME
+
+  - name: OBJ_VIEW_FIELD
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: OBJ_VIEW_FIELD
+    description: "Field configuration for object views"
+    dimensions:
+      - name: OBJ_TYPE
+        expr: OBJ_TYPE
+        data_type: STRING
+        description: Object type
+        synonyms:
+          - class_name
+          - object_type
+      - name: VIEW_NAME
+        expr: VIEW_NAME
+        data_type: STRING
+        description: View name
+      - name: VERSION
+        expr: VERSION
+        data_type: STRING
+        description: View version
+      - name: PROP_NAME
+        expr: PROP_NAME
+        data_type: STRING
+        description: Property name
+      - name: RENDER_HINT
+        expr: RENDER_HINT
+        data_type: STRING
+        description: UI rendering hint (badge, link, date, number, etc.)
+    facts:
+      - name: FIELD_ORDER
+        expr: FIELD_ORDER
+        data_type: NUMBER
+        description: Display order of field
+    primary_key:
+      columns:
+        - OBJ_TYPE
+        - VIEW_NAME
+        - VERSION
+        - PROP_NAME
+
+  # =====================================================
+  # PERMISSIONS AND ROLES
+  # =====================================================
+  - name: ONT_ROLE
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_ROLE
+    description: "Ontology-specific roles for access control"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology name
+      - name: ONT_ROLE_NAME
+        expr: ONT_ROLE_NAME
+        data_type: STRING
+        description: Role name (e.g., ANALYST, SCOUT, ADMIN)
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Role description
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+        - ONT_ROLE_NAME
+
+  - name: ONT_ROLE_BINDING
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_ROLE_BINDING
+    description: "Maps ontology roles to Snowflake roles"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology name
+      - name: ONT_ROLE_NAME
+        expr: ONT_ROLE_NAME
+        data_type: STRING
+        description: Ontology role name
+      - name: SNOWFLAKE_ROLE
+        expr: SNOWFLAKE_ROLE
+        data_type: STRING
+        description: Mapped Snowflake role
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+        - ONT_ROLE_NAME
+        - SNOWFLAKE_ROLE
+
+  - name: ONT_PERMISSION
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_PERMISSION
+    description: "Granular permissions for object types, link types, and actions"
+    dimensions:
+      - name: ONTOLOGY_NAME
+        expr: ONTOLOGY_NAME
+        data_type: STRING
+        description: Ontology name
+      - name: SUBJECT_KIND
+        expr: SUBJECT_KIND
+        data_type: STRING
+        description: What kind of element permission applies to
+        sample_values:
+          - OBJECT_TYPE
+          - LINK_TYPE
+          - ACTION_TYPE
+      - name: SUBJECT_NAME
+        expr: SUBJECT_NAME
+        data_type: STRING
+        description: Name of element (e.g., Player, PLAYS_FOR, REQUEST_TRANSFER)
+      - name: ONT_ROLE_NAME
+        expr: ONT_ROLE_NAME
+        data_type: STRING
+        description: Role name
+      - name: PRIVILEGE
+        expr: PRIVILEGE
+        data_type: STRING
+        description: Privilege level (READ, WRITE, EXECUTE, ADMIN)
+        sample_values:
+          - READ
+          - WRITE
+          - EXECUTE
+          - ADMIN
+    primary_key:
+      columns:
+        - ONTOLOGY_NAME
+        - SUBJECT_KIND
+        - SUBJECT_NAME
+        - ONT_ROLE_NAME
+        - PRIVILEGE
+
+  # =====================================================
+  # INFERENCE AND DATA QUALITY
+  # =====================================================
+  - name: ONT_RULE
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_RULE
+    description: "Inference rule registry"
+    dimensions:
+      - name: RULE_ID
+        expr: RULE_ID
+        data_type: STRING
+        description: Rule identifier
+      - name: RULE_KIND
+        expr: RULE_KIND
+        data_type: STRING
+        description: Rule type (TRANSITIVE, PROPERTY_CHAIN, INVERSE)
+        sample_values:
+          - TRANSITIVE
+          - PROPERTY_CHAIN
+          - INVERSE
+      - name: TARGET_REL
+        expr: TARGET_REL
+        data_type: STRING
+        description: Target relationship this rule generates
+      - name: IS_ENABLED
+        expr: IS_ENABLED
+        data_type: BOOLEAN
+        description: Whether rule is currently enabled
+      - name: DESCRIPTION
+        expr: DESCRIPTION
+        data_type: STRING
+        description: Rule description
+    time_dimensions:
+      - name: TS_CREATED
+        expr: TS_CREATED
+        data_type: TIMESTAMP
+        description: When rule was created
+    primary_key:
+      columns:
+        - RULE_ID
+
+  - name: REL_EDGE_INFERRED
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: REL_EDGE_INFERRED
+    description: "Inferred relationships generated by inference rules"
+    dimensions:
+      - name: REL_NAME
+        expr: REL_NAME
+        data_type: STRING
+        description: Relationship name
+      - name: SRC_ID
+        expr: SRC_ID
+        data_type: STRING
+        description: Source node ID
+      - name: DST_ID
+        expr: DST_ID
+        data_type: STRING
+        description: Destination node ID
+      - name: INFERENCE_KIND
+        expr: INFERENCE_KIND
+        data_type: STRING
+        description: How relationship was inferred
+        sample_values:
+          - TRANSITIVE
+          - INVERSE
+          - PROPERTY_CHAIN
+      - name: RULE_ID
+        expr: RULE_ID
+        data_type: STRING
+        description: Rule that generated this inference
+    time_dimensions:
+      - name: COMPUTED_AT
+        expr: COMPUTED_AT
+        data_type: TIMESTAMP
+        description: When inference was computed
+    primary_key:
+      columns:
+        - REL_NAME
+        - SRC_ID
+        - DST_ID
+        - RULE_ID
+
+  - name: ONT_CONSTRAINT_VIOLATION
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: ONT_CONSTRAINT_VIOLATION
+    description: "Data quality constraint violations"
+    dimensions:
+      - name: VIOLATION_ID
+        expr: VIOLATION_ID
+        data_type: STRING
+        description: Violation identifier
+      - name: CHECK_NAME
+        expr: CHECK_NAME
+        data_type: STRING
+        description: Name of check that failed
+      - name: SCOPE
+        expr: SCOPE
+        data_type: STRING
+        description: Violation scope (RELATION, CLASS, GLOBAL)
+        sample_values:
+          - RELATION
+          - CLASS
+          - GLOBAL
+      - name: REL_OR_CLASS
+        expr: REL_OR_CLASS
+        data_type: STRING
+        description: Relationship or class with violation
+      - name: SRC_ID
+        expr: SRC_ID
+        data_type: STRING
+        description: Source entity ID
+      - name: DST_ID
+        expr: DST_ID
+        data_type: STRING
+        description: Destination entity ID
+      - name: DETAILS
+        expr: DETAILS
+        data_type: STRING
+        description: Violation details
+    time_dimensions:
+      - name: OBSERVED_AT
+        expr: OBSERVED_AT
+        data_type: TIMESTAMP
+        description: When violation was observed
+    primary_key:
+      columns:
+        - VIOLATION_ID
+
+relationships:
+  # =====================================================
+  # METADATA RELATIONSHIPS
+  # =====================================================
+  - name: class_to_ontology
+    left_table: ONT_CLASS
+    right_table: ONT_ONTOLOGY
+    relationship_columns:
+      - left_column: ONTOLOGY_NAME
+        right_column: ONTOLOGY_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: property_to_class
+    left_table: ONT_PROPERTY
+    right_table: ONT_CLASS
+    relationship_columns:
+      - left_column: CLASS_NAME
+        right_column: CLASS_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: property_to_shared_property
+    left_table: ONT_PROPERTY
+    right_table: ONT_SHARED_PROPERTY
+    relationship_columns:
+      - left_column: SHARED_PROP_NAME
+        right_column: SHARED_PROP_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: derived_property_to_class
+    left_table: ONT_DERIVED_PROPERTY
+    right_table: ONT_CLASS
+    relationship_columns:
+      - left_column: CLASS_NAME
+        right_column: CLASS_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: relation_to_ontology
+    left_table: ONT_RELATION_DEF
+    right_table: ONT_ONTOLOGY
+    relationship_columns:
+      - left_column: ONTOLOGY_NAME
+        right_column: ONTOLOGY_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: interface_impl_to_interface
+    left_table: ONT_INTERFACE_IMPL
+    right_table: ONT_INTERFACE
+    relationship_columns:
+      - left_column: INTERFACE_NAME
+        right_column: INTERFACE_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: interface_impl_to_class
+    left_table: ONT_INTERFACE_IMPL
+    right_table: ONT_CLASS
+    relationship_columns:
+      - left_column: CLASS_NAME
+        right_column: CLASS_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: action_to_class
+    left_table: ACT_TYPE
+    right_table: ONT_CLASS
+    relationship_columns:
+      - left_column: TARGET_CLASS
+        right_column: CLASS_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: action_def_to_action_type
+    left_table: ACT_DEF
+    right_table: ACT_TYPE
+    relationship_columns:
+      - left_column: ACTION_TYPE_ID
+        right_column: ACTION_TYPE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: function_binding_to_function
+    left_table: ONT_FUNCTION_BINDING
+    right_table: ONT_FUNCTION
+    relationship_columns:
+      - left_column: ONTOLOGY_NAME
+        right_column: ONTOLOGY_NAME
+      - left_column: FUNCTION_NAME
+        right_column: FUNCTION_NAME
+      - left_column: VERSION
+        right_column: VERSION
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: permission_to_role
+    left_table: ONT_PERMISSION
+    right_table: ONT_ROLE
+    relationship_columns:
+      - left_column: ONTOLOGY_NAME
+        right_column: ONTOLOGY_NAME
+      - left_column: ONT_ROLE_NAME
+        right_column: ONT_ROLE_NAME
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: inferred_edge_to_rule
+    left_table: REL_EDGE_INFERRED
+    right_table: ONT_RULE
+    relationship_columns:
+      - left_column: RULE_ID
+        right_column: RULE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+# =====================================================
+# METRICS - Governance-level aggregations
+# =====================================================
+metrics:
+  - name: class_count
+    expr: COUNT(DISTINCT CLASS_NAME)
+    data_type: NUMBER
+    description: "Number of object types/classes in the ontology"
+    synonyms:
+      - number_of_classes
+      - object_type_count
+
+  - name: property_count
+    expr: COUNT(DISTINCT PROP_NAME)
+    data_type: NUMBER
+    description: "Number of properties defined"
+    synonyms:
+      - number_of_properties
+      - field_count
+
+  - name: relation_count
+    expr: COUNT(DISTINCT REL_NAME)
+    data_type: NUMBER
+    description: "Number of relationship types"
+    synonyms:
+      - link_type_count
+      - edge_type_count
+
+  - name: active_rules_count
+    expr: "COUNT(CASE WHEN IS_ENABLED = TRUE THEN 1 END)"
+    data_type: NUMBER
+    description: "Count of enabled inference rules"
+    synonyms:
+      - enabled_rules
+      - active_inference_count
+
+  - name: violation_count
+    expr: COUNT(*)
+    data_type: NUMBER
+    description: "Number of constraint violations"
+    synonyms:
+      - error_count
+      - issue_count
+
+  - name: permission_count
+    expr: COUNT(DISTINCT SUBJECT_NAME || ONT_ROLE_NAME || PRIVILEGE)
+    data_type: NUMBER
+    description: "Number of permission grants"
+    synonyms:
+      - grant_count
+      - access_count
+
+  - name: action_count
+    expr: COUNT(DISTINCT ACTION_TYPE_ID)
+    data_type: NUMBER
+    description: "Number of available actions"
+    synonyms:
+      - operation_count
+      - capability_count
+
+  - name: function_count
+    expr: COUNT(DISTINCT FUNCTION_NAME)
+    data_type: NUMBER
+    description: "Number of analytical functions"
+    synonyms:
+      - udf_count
+      - procedure_count
+
+# =====================================================
+# FILTERS - Governance-level filters
+# =====================================================
+filters:
+  - name: active_only
+    expr: "STATUS = 'ACTIVE'"
+    description: "Filter for active elements (not deprecated)"
+    synonyms:
+      - current_only
+      - not_deprecated
+
+  - name: enabled_rules
+    expr: "IS_ENABLED = TRUE"
+    description: "Filter for enabled inference rules"
+    synonyms:
+      - active_rules
+      - working_rules
+
+  - name: soccer_ontology
+    expr: "ONTOLOGY_NAME = 'SOCCER_V1'"
+    description: "Filter for soccer ontology"
+    synonyms:
+      - soccer_v1
+      - football_ontology
+
+  - name: abstract_classes
+    expr: "IS_ABSTRACT = TRUE"
+    description: "Filter for abstract classes only"
+    synonyms:
+      - abstract_only
+      - parent_classes
+
+  - name: concrete_classes
+    expr: "IS_ABSTRACT = FALSE"
+    description: "Filter for concrete (instantiable) classes"
+    synonyms:
+      - concrete_only
+      - leaf_classes
+
+  - name: required_properties
+    expr: "IS_REQUIRED = TRUE"
+    description: "Filter for mandatory properties"
+    synonyms:
+      - mandatory_only
+      - required_fields
+
+  - name: admin_permissions
+    expr: "PRIVILEGE = 'ADMIN'"
+    description: "Filter for admin-level permissions"
+    synonyms:
+      - admin_access
+      - full_control
+
+  - name: read_permissions
+    expr: "PRIVILEGE = 'READ'"
+    description: "Filter for read-only permissions"
+    synonyms:
+      - read_access
+      - view_only
+
+  - name: write_permissions
+    expr: "PRIVILEGE = 'WRITE'"
+    description: "Filter for write permissions"
+    synonyms:
+      - write_access
+      - modify_access
+
+  - name: enabled_actions
+    expr: "IS_ENABLED = TRUE"
+    description: "Filter for enabled actions"
+    synonyms:
+      - available_actions
+      - active_actions
+
+verified_queries:
+  # =====================================================
+  # ONTOLOGY STRUCTURE QUERIES
+  # =====================================================
+  - name: ontology_overview
+    question: What is the structure of the ontology?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        o.ONTOLOGY_NAME,
+        o.VERSION,
+        o.DESCRIPTION,
+        o.IS_ACTIVE,
+        COUNT(DISTINCT c.CLASS_NAME) as total_object_types,
+        COUNT(DISTINCT r.REL_NAME) as total_link_types,
+        COUNT(DISTINCT p.PROP_NAME || p.CLASS_NAME) as total_properties,
+        COUNT(DISTINCT i.INTERFACE_NAME) as total_interfaces,
+        COUNT(DISTINCT a.ACTION_TYPE_ID) as total_actions
+      FROM ONT_ONTOLOGY o
+      LEFT JOIN ONT_CLASS c ON o.ONTOLOGY_NAME = c.ONTOLOGY_NAME
+      LEFT JOIN ONT_RELATION_DEF r ON o.ONTOLOGY_NAME = r.ONTOLOGY_NAME
+      LEFT JOIN ONT_PROPERTY p ON c.CLASS_NAME = p.CLASS_NAME
+      LEFT JOIN ONT_INTERFACE i ON 1=1
+      LEFT JOIN ACT_TYPE a ON o.ONTOLOGY_NAME = a.ONTOLOGY_NAME
+      WHERE o.IS_ACTIVE = TRUE
+      GROUP BY o.ONTOLOGY_NAME, o.VERSION, o.DESCRIPTION, o.IS_ACTIVE
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: object_type_catalog
+    question: What object types are available in the ontology?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        c.CLASS_NAME as object_type,
+        c.PARENT_CLASS_NAME,
+        c.IS_ABSTRACT,
+        c.TYPE_CLASS,
+        c.STATUS,
+        c.DESCRIPTION,
+        COUNT(DISTINCT p.PROP_NAME) as property_count,
+        LISTAGG(DISTINCT p.PROP_NAME, ', ') WITHIN GROUP (ORDER BY p.PROP_NAME) as properties
+      FROM ONT_CLASS c
+      LEFT JOIN ONT_PROPERTY p ON c.CLASS_NAME = p.CLASS_NAME
+      WHERE c.ONTOLOGY_NAME = 'SOCCER_V1'
+        AND c.STATUS = 'ACTIVE'
+      GROUP BY c.CLASS_NAME, c.PARENT_CLASS_NAME, c.IS_ABSTRACT, c.TYPE_CLASS, c.STATUS, c.DESCRIPTION
+      ORDER BY c.PARENT_CLASS_NAME NULLS FIRST, c.CLASS_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: link_type_catalog
+    question: What relationships exist in the ontology and what are their cardinalities?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        r.REL_NAME as link_type,
+        r.DOMAIN_CLASS as from_object_type,
+        r.RANGE_CLASS as to_object_type,
+        r.CARDINALITY,
+        r.IS_HIERARCHICAL,
+        r.INVERSE_REL_NAME,
+        r.DESCRIPTION,
+        r.STATUS
+      FROM ONT_RELATION_DEF r
+      WHERE r.ONTOLOGY_NAME = 'SOCCER_V1'
+        AND r.STATUS = 'ACTIVE'
+      ORDER BY r.DOMAIN_CLASS, r.REL_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: class_property_details
+    question: What properties does the Player class have?
+    sql: |
+      SELECT 
+        p.PROP_NAME,
+        p.DATA_TYPE,
+        p.IS_REQUIRED,
+        p.IS_INDEXED,
+        p.SHARED_PROP_NAME,
+        p.DESCRIPTION,
+        CASE WHEN p.SHARED_PROP_NAME IS NOT NULL THEN sp.DESCRIPTION ELSE NULL END as shared_property_description
+      FROM ONT_PROPERTY p
+      LEFT JOIN ONT_SHARED_PROPERTY sp ON p.SHARED_PROP_NAME = sp.SHARED_PROP_NAME
+      WHERE p.CLASS_NAME = 'Player'
+      ORDER BY p.IS_REQUIRED DESC, p.PROP_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: derived_properties_catalog
+    question: What computed properties are available?
+    sql: |
+      SELECT 
+        d.CLASS_NAME as object_type,
+        d.PROP_NAME as computed_property,
+        d.DEFINITION_KIND,
+        d.DESCRIPTION,
+        CASE 
+          WHEN LENGTH(d.SQL_EXPR) > 100 THEN SUBSTRING(d.SQL_EXPR, 1, 97) || '...'
+          ELSE d.SQL_EXPR
+        END as sql_definition_preview
+      FROM ONT_DERIVED_PROPERTY d
+      ORDER BY d.CLASS_NAME, d.PROP_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: interface_implementations
+    question: Which classes implement which interfaces?
+    sql: |
+      SELECT 
+        i.INTERFACE_NAME,
+        i.DESCRIPTION as interface_description,
+        LISTAGG(DISTINCT impl.CLASS_NAME, ', ') WITHIN GROUP (ORDER BY impl.CLASS_NAME) as implementing_classes,
+        COUNT(DISTINCT impl.CLASS_NAME) as implementation_count
+      FROM ONT_INTERFACE i
+      LEFT JOIN ONT_INTERFACE_IMPL impl ON i.INTERFACE_NAME = impl.INTERFACE_NAME
+      GROUP BY i.INTERFACE_NAME, i.DESCRIPTION
+      ORDER BY i.INTERFACE_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # ACTION AND CAPABILITY QUERIES
+  # =====================================================
+  - name: available_actions_by_object_type
+    question: What actions can I perform on players?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        a.ACTION_NAME,
+        a.DESCRIPTION,
+        a.TARGET_CLASS as applies_to_object_type,
+        a.IS_ENABLED,
+        COUNT(d.PARAM_NAME) as parameter_count,
+        LISTAGG(d.PARAM_NAME || ' (' || d.PARAM_TYPE || 
+          CASE WHEN d.IS_REQUIRED THEN ', required' ELSE '' END || ')', '; ') 
+          WITHIN GROUP (ORDER BY d.PARAM_NAME) as parameters
+      FROM ACT_TYPE a
+      LEFT JOIN ACT_DEF d ON a.ACTION_TYPE_ID = d.ACTION_TYPE_ID
+      WHERE a.TARGET_CLASS = 'Player'
+        AND a.IS_ENABLED = TRUE
+      GROUP BY a.ACTION_NAME, a.DESCRIPTION, a.TARGET_CLASS, a.IS_ENABLED
+      ORDER BY a.ACTION_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: all_available_actions
+    question: What actions are available in the system?
+    sql: |
+      SELECT 
+        a.TARGET_CLASS as object_type,
+        a.ACTION_NAME,
+        a.DESCRIPTION,
+        a.IS_ENABLED,
+        COUNT(d.PARAM_NAME) as parameter_count
+      FROM ACT_TYPE a
+      LEFT JOIN ACT_DEF d ON a.ACTION_TYPE_ID = d.ACTION_TYPE_ID
+      WHERE a.IS_ENABLED = TRUE
+      GROUP BY a.TARGET_CLASS, a.ACTION_NAME, a.DESCRIPTION, a.IS_ENABLED
+      ORDER BY a.TARGET_CLASS, a.ACTION_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: analytical_functions_catalog
+    question: What analytical functions are available?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        f.FUNCTION_NAME,
+        f.VERSION,
+        f.LANGUAGE,
+        f.DESCRIPTION,
+        COUNT(DISTINCT fb.BOUND_TO_NAME) as binding_count,
+        LISTAGG(DISTINCT fb.BOUND_TO_KIND, ', ') WITHIN GROUP (ORDER BY fb.BOUND_TO_KIND) as bound_to_types
+      FROM ONT_FUNCTION f
+      LEFT JOIN ONT_FUNCTION_BINDING fb ON f.FUNCTION_NAME = fb.FUNCTION_NAME AND f.VERSION = fb.VERSION
+      GROUP BY f.FUNCTION_NAME, f.VERSION, f.LANGUAGE, f.DESCRIPTION
+      ORDER BY f.FUNCTION_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: function_bindings
+    question: Where is the player market value function used?
+    sql: |
+      SELECT 
+        fb.FUNCTION_NAME,
+        f.VERSION,
+        f.DESCRIPTION as function_description,
+        fb.BOUND_TO_KIND as used_in,
+        fb.BOUND_TO_NAME as element_name
+      FROM ONT_FUNCTION_BINDING fb
+      JOIN ONT_FUNCTION f ON fb.FUNCTION_NAME = f.FUNCTION_NAME AND fb.VERSION = f.VERSION
+      WHERE fb.FUNCTION_NAME = 'player_market_value'
+      ORDER BY fb.BOUND_TO_KIND, fb.BOUND_TO_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # PERMISSION AND ACCESS CONTROL QUERIES
+  # =====================================================
+  - name: role_permissions
+    question: What permissions does the ANALYST role have?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        r.ONT_ROLE_NAME as role,
+        r.DESCRIPTION as role_description,
+        p.SUBJECT_KIND as applies_to,
+        p.SUBJECT_NAME as element_name,
+        LISTAGG(DISTINCT p.PRIVILEGE, ', ') WITHIN GROUP (ORDER BY p.PRIVILEGE) as privileges
+      FROM ONT_ROLE r
+      LEFT JOIN ONT_PERMISSION p ON r.ONTOLOGY_NAME = p.ONTOLOGY_NAME AND r.ONT_ROLE_NAME = p.ONT_ROLE_NAME
+      WHERE r.ONT_ROLE_NAME = 'ANALYST'
+        AND r.ONTOLOGY_NAME = 'SOCCER_V1'
+      GROUP BY r.ONT_ROLE_NAME, r.DESCRIPTION, p.SUBJECT_KIND, p.SUBJECT_NAME
+      ORDER BY p.SUBJECT_KIND, p.SUBJECT_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: all_roles_and_permissions
+    question: What roles exist and what can they do?
+    sql: |
+      SELECT 
+        r.ONT_ROLE_NAME as role,
+        r.DESCRIPTION as role_description,
+        COUNT(DISTINCT CASE WHEN p.SUBJECT_KIND = 'OBJECT_TYPE' THEN p.SUBJECT_NAME END) as object_types_accessible,
+        COUNT(DISTINCT CASE WHEN p.SUBJECT_KIND = 'LINK_TYPE' THEN p.SUBJECT_NAME END) as link_types_accessible,
+        COUNT(DISTINCT CASE WHEN p.SUBJECT_KIND = 'ACTION_TYPE' THEN p.SUBJECT_NAME END) as actions_accessible,
+        LISTAGG(DISTINCT p.PRIVILEGE, ', ') WITHIN GROUP (ORDER BY p.PRIVILEGE) as all_privileges
+      FROM ONT_ROLE r
+      LEFT JOIN ONT_PERMISSION p ON r.ONTOLOGY_NAME = p.ONTOLOGY_NAME AND r.ONT_ROLE_NAME = p.ONT_ROLE_NAME
+      WHERE r.ONTOLOGY_NAME = 'SOCCER_V1'
+      GROUP BY r.ONT_ROLE_NAME, r.DESCRIPTION
+      ORDER BY r.ONT_ROLE_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: object_type_access_control
+    question: Who has access to Player data?
+    sql: |
+      SELECT 
+        p.ONT_ROLE_NAME as role,
+        r.DESCRIPTION as role_description,
+        p.PRIVILEGE,
+        rb.SNOWFLAKE_ROLE as mapped_to_snowflake_role
+      FROM ONT_PERMISSION p
+      JOIN ONT_ROLE r ON p.ONTOLOGY_NAME = r.ONTOLOGY_NAME AND p.ONT_ROLE_NAME = r.ONT_ROLE_NAME
+      LEFT JOIN ONT_ROLE_BINDING rb ON r.ONTOLOGY_NAME = rb.ONTOLOGY_NAME AND r.ONT_ROLE_NAME = rb.ONT_ROLE_NAME
+      WHERE p.SUBJECT_KIND = 'OBJECT_TYPE'
+        AND p.SUBJECT_NAME = 'Player'
+        AND p.ONTOLOGY_NAME = 'SOCCER_V1'
+      ORDER BY p.PRIVILEGE, p.ONT_ROLE_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # DATA QUALITY AND INFERENCE QUERIES
+  # =====================================================
+  - name: data_quality_violations
+    question: Are there any data quality issues?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        v.CHECK_NAME,
+        v.SCOPE,
+        v.REL_OR_CLASS as affected_element,
+        COUNT(*) as violation_count,
+        MAX(v.OBSERVED_AT) as last_observed,
+        LISTAGG(DISTINCT v.DETAILS, '; ') WITHIN GROUP (ORDER BY v.DETAILS) as violation_types
+      FROM ONT_CONSTRAINT_VIOLATION v
+      GROUP BY v.CHECK_NAME, v.SCOPE, v.REL_OR_CLASS
+      ORDER BY violation_count DESC
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: specific_violation_details
+    question: Show me details of data quality violations
+    sql: |
+      SELECT 
+        v.CHECK_NAME,
+        v.SCOPE,
+        v.REL_OR_CLASS as relationship,
+        v.SRC_ID as source_entity_id,
+        v.DST_ID as destination_entity_id,
+        v.DETAILS,
+        v.OBSERVED_AT
+      FROM ONT_CONSTRAINT_VIOLATION v
+      ORDER BY v.OBSERVED_AT DESC
+      LIMIT 20
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: inference_rules_catalog
+    question: What inference rules are configured?
+    sql: |
+      SELECT 
+        r.RULE_ID,
+        r.RULE_KIND,
+        r.TARGET_REL as generates_relationship,
+        r.IS_ENABLED,
+        r.DESCRIPTION
+      FROM ONT_RULE r
+      ORDER BY r.IS_ENABLED DESC, r.RULE_KIND, r.RULE_ID
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: inferred_relationships_summary
+    question: What relationships were inferred?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        i.REL_NAME as inferred_relationship,
+        i.INFERENCE_KIND as inferred_by,
+        i.RULE_ID as using_rule,
+        r.DESCRIPTION as rule_description,
+        COUNT(*) as inferred_count,
+        COUNT(DISTINCT i.SRC_ID) as unique_sources,
+        COUNT(DISTINCT i.DST_ID) as unique_targets,
+        MAX(i.COMPUTED_AT) as last_computed
+      FROM REL_EDGE_INFERRED i
+      LEFT JOIN ONT_RULE r ON i.RULE_ID = r.RULE_ID
+      GROUP BY i.REL_NAME, i.INFERENCE_KIND, i.RULE_ID, r.DESCRIPTION
+      ORDER BY inferred_count DESC
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # SOURCE MAPPING QUERIES
+  # =====================================================
+  - name: object_source_mappings
+    question: Where does the data for each object type come from?
+    sql: |
+      SELECT 
+        os.CLASS_NAME as object_type,
+        os.SOURCE_TYPE,
+        os.SOURCE_REF as data_source,
+        c.DESCRIPTION as object_type_description
+      FROM ONT_OBJECT_SOURCE os
+      JOIN ONT_CLASS c ON os.CLASS_NAME = c.CLASS_NAME
+      WHERE os.ONTOLOGY_NAME = 'SOCCER_V1'
+      ORDER BY os.CLASS_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  - name: link_source_mappings
+    question: Where does the relationship data come from?
+    sql: |
+      SELECT 
+        ls.REL_NAME as link_type,
+        ls.SOURCE_TYPE,
+        ls.SOURCE_REF as data_source,
+        r.DESCRIPTION as link_type_description
+      FROM ONT_LINK_SOURCE ls
+      JOIN ONT_RELATION_DEF r ON ls.REL_NAME = r.REL_NAME
+      WHERE ls.ONTOLOGY_NAME = 'SOCCER_V1'
+      ORDER BY ls.REL_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # UI CONFIGURATION QUERIES
+  # =====================================================
+  - name: available_object_views
+    question: What views are available for displaying player information?
+    sql: |
+      SELECT 
+        v.VIEW_NAME,
+        v.VIEW_KIND,
+        v.STATUS,
+        COUNT(f.PROP_NAME) as field_count,
+        LISTAGG(f.PROP_NAME, ', ') WITHIN GROUP (ORDER BY f.FIELD_ORDER) as fields
+      FROM OBJ_VIEW_DEF v
+      LEFT JOIN OBJ_VIEW_FIELD f ON v.CLASS_NAME = f.CLASS_NAME 
+        AND v.VIEW_NAME = f.VIEW_NAME 
+        AND v.VERSION = f.VERSION
+      WHERE v.CLASS_NAME = 'Player'
+        AND v.STATUS = 'ACTIVE'
+      GROUP BY v.VIEW_NAME, v.VIEW_KIND, v.STATUS
+      ORDER BY v.VIEW_KIND, v.VIEW_NAME
+    verified_by: Soccer Metadata Governance Model
+    verified_at: 1747672000
+
+custom_instructions: |-
+  METADATA AND DATA GOVERNANCE SEMANTIC MODEL GUIDE:
+  
+  This semantic model enables introspection and governance of the soccer knowledge graph ontology.
+  Use this model to answer questions about the ontology structure, capabilities, permissions, and data quality.
+  
+  WHEN TO USE THIS MODEL:
+  1. Ontology structure discovery - "What object types exist?", "What relationships are defined?"
+  2. Capability discovery - "What actions can I perform?", "What functions are available?"
+  3. Permission and access control - "What can the ANALYST role do?", "Who has access to Player data?"
+  4. Data quality monitoring - "Are there any data quality issues?", "Show me constraint violations"
+  5. Inference tracking - "What relationships were inferred?", "What inference rules are active?"
+  6. Property and schema discovery - "What properties does Player have?", "What computed properties exist?"
+  7. Source lineage - "Where does Player data come from?", "What is the source of PLAYS_FOR relationships?"
+  8. UI configuration - "What views are available for players?"
+  
+  KEY TABLE CATEGORIES:
+  
+  1. **Ontology Structure** (for "what exists" questions):
+     - ONT_ONTOLOGY: Overall ontology registry
+     - ONT_CLASS: Object types (Player, Coach, Club, Match)
+     - ONT_RELATION_DEF: Link types (PLAYS_FOR, COACHES, etc.)
+     - ONT_PROPERTY: Properties of each object type
+     - ONT_SHARED_PROPERTY: Reusable properties across types
+     - ONT_DERIVED_PROPERTY: Computed properties
+  
+  2. **Capabilities** (for "what can I do" questions):
+     - ACT_TYPE: Available actions (REQUEST_TRANSFER, SIGN_CONTRACT, etc.)
+     - ACT_DEF: Parameters for each action
+     - ONT_FUNCTION: Analytical functions (compute_player_age, calculate_xg, etc.)
+     - ONT_FUNCTION_BINDING: Where functions are used
+  
+  3. **Access Control** (for permission questions):
+     - ONT_ROLE: Defined roles (ANALYST, SCOUT, ADMIN, etc.)
+     - ONT_PERMISSION: Granular permissions per role
+     - ONT_ROLE_BINDING: Mapping to Snowflake roles
+  
+  4. **Data Quality** (for quality monitoring):
+     - ONT_CONSTRAINT_VIOLATION: Constraint violations log
+     - ONT_RULE: Inference rules configuration
+     - REL_EDGE_INFERRED: Inferred relationships
+  
+  5. **Source Mapping** (for lineage):
+     - ONT_OBJECT_SOURCE: Where object data comes from
+     - ONT_LINK_SOURCE: Where relationship data comes from
+  
+  6. **Polymorphism** (for interface discovery):
+     - ONT_INTERFACE: Interface definitions (PERSON, COMPETITION_MEMBER)
+     - ONT_INTERFACE_IMPL: Which classes implement which interfaces
+  
+  7. **UI Configuration**:
+     - OBJ_VIEW_DEF: View definitions (FULL, PANEL, LIST)
+     - OBJ_VIEW_FIELD: Field configurations for views
+  
+  QUERY PATTERNS:
+  
+  1. **Structure Discovery**:
+     ```sql
+     -- What object types exist?
+     SELECT CLASS_NAME, DESCRIPTION, STATUS FROM ONT_CLASS 
+     WHERE ONTOLOGY_NAME = 'SOCCER_V1' AND STATUS = 'ACTIVE'
+     ```
+  
+  2. **Capability Discovery**:
+     ```sql
+     -- What actions can I perform on Player?
+     SELECT ACTION_NAME, DESCRIPTION FROM ACT_TYPE 
+     WHERE TARGET_CLASS = 'Player' AND IS_ENABLED = TRUE
+     ```
+  
+  3. **Permission Check**:
+     ```sql
+     -- What can ANALYST role do?
+     SELECT SUBJECT_KIND, SUBJECT_NAME, PRIVILEGE 
+     FROM ONT_PERMISSION 
+     WHERE ONT_ROLE_NAME = 'ANALYST'
+     ```
+  
+  4. **Data Quality**:
+     ```sql
+     -- Are there violations?
+     SELECT CHECK_NAME, COUNT(*) as violation_count 
+     FROM ONT_CONSTRAINT_VIOLATION 
+     GROUP BY CHECK_NAME
+     ```
+  
+  5. **Property Discovery**:
+     ```sql
+     -- What properties does Player have?
+     SELECT PROP_NAME, DATA_TYPE, IS_REQUIRED, DESCRIPTION 
+     FROM ONT_PROPERTY 
+     WHERE CLASS_NAME = 'Player'
+     ```
+  
+  BEST PRACTICES:
+  - Use this model for metadata/governance questions, use soccer_knowledge_graph_ontology for business data queries
+  - Join to ONT_CLASS to get object type descriptions
+  - Filter by ONTOLOGY_NAME = 'SOCCER_V1' to focus on soccer ontology
+  - Check IS_ENABLED flag for actions and rules
+  - Check STATUS = 'ACTIVE' for current/valid definitions
+  - Use aggregations to summarize capabilities (e.g., COUNT of permissions by role)
+  
+  COMMON USE CASES:
+  - Self-service data catalog: Users discover what data exists
+  - Access requests: Users see what roles have access to what
+  - Data quality dashboards: Monitor constraint violations
+  - Developer documentation: Discover available actions and functions
+  - Ontology evolution: Track changes to structure over time
+
+module_custom_instructions:
+  sql_generation: |-
+    Governance SQL Generation Rules:
+    
+    1. TABLE HIERARCHY FOR STRUCTURE QUERIES:
+       - Start with ONT_ONTOLOGY for overall context
+       - Join ONT_CLASS for object types
+       - Join ONT_PROPERTY for class attributes
+       - Join ONT_RELATION_DEF for relationship types
+    
+    2. TABLE HIERARCHY FOR ACCESS QUERIES:
+       - Start with ONT_ROLE for role definitions
+       - Join ONT_PERMISSION for access grants
+       - Filter by PRIVILEGE (READ, WRITE, EXECUTE, ADMIN)
+    
+    3. TABLE HIERARCHY FOR QUALITY QUERIES:
+       - ONT_CONSTRAINT_VIOLATION for current issues
+       - ONT_RULE for inference rule status
+       - REL_EDGE_INFERRED for derived data
+    
+    4. COMMON FILTER PATTERNS:
+       - Use pre-defined filters: active_only, enabled_rules, soccer_ontology
+       - Always filter by ONTOLOGY_NAME = 'SOCCER_V1' for soccer queries
+       - Check STATUS = 'ACTIVE' for non-deprecated elements
+       - Check IS_ENABLED = TRUE for active rules/actions
+    
+    5. AGGREGATION PATTERNS:
+       - Use pre-defined metrics: class_count, property_count, violation_count
+       - GROUP BY CLASS_NAME for per-class summaries
+       - GROUP BY ONT_ROLE_NAME for per-role permission summaries
+  
+  question_categorization: |-
+    Treat the following as UNAMBIGUOUS_SQL for governance queries:
+    - "What classes/types exist?" → ONT_CLASS
+    - "What properties does X have?" → ONT_PROPERTY with CLASS_NAME filter
+    - "What relationships exist?" → ONT_RELATION_DEF
+    - "Who has access to X?" → ONT_PERMISSION
+    - "What can [role] do?" → ONT_PERMISSION with role filter
+    - "Are there data quality issues?" → ONT_CONSTRAINT_VIOLATION
+    - "What actions are available?" → ACT_TYPE
+    - "What functions exist?" → ONT_FUNCTION
+

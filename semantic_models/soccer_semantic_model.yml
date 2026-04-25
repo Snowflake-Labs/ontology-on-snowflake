@@ -1,0 +1,1755 @@
+# Copyright 2026 Snowflake Inc.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: soccer_knowledge_graph_v2
+description: Soccer knowledge graph model using node-edge architecture with convenience views for natural language querying
+tables:
+  # =====================================================
+  # CONVENIENCE ENTITY VIEWS
+  # =====================================================
+  - name: V_PLAYER
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_PLAYER
+    description: "View of all players with extracted properties from KG_NODE"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Player node identifier
+        synonyms:
+          - player_id
+          - node_key
+          - entity_id
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        sample_values:
+          - "Kylian Mbappé"
+          - "Erling Haaland"
+          - "Jude Bellingham"
+        description: Player's full name
+        synonyms:
+          - player_name
+          - full_name
+          - name
+      - name: POSITION
+        expr: POSITION
+        data_type: STRING
+        sample_values:
+          - Forward
+          - Midfielder
+          - Defender
+          - Goalkeeper
+        description: Player's position on the field
+        synonyms:
+          - playing_position
+          - field_position
+          - role
+          - position_name
+      - name: NATIONALITY
+        expr: NATIONALITY
+        data_type: STRING
+        sample_values:
+          - France
+          - Norway
+          - England
+        description: Player's nationality
+        synonyms:
+          - country
+          - origin
+          - citizenship
+          - nation
+      - name: BIRTHDATE
+        expr: BIRTHDATE
+        data_type: DATE
+        sample_values:
+          - '1998-12-20'
+          - '2000-07-21'
+          - '2003-06-29'
+        description: Player's date of birth
+        synonyms:
+          - birth_date
+          - dob
+          - date_of_birth
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional player properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_COACH
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_COACH
+    description: "View of all coaches with extracted properties from KG_NODE"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Coach node identifier
+        synonyms:
+          - coach_id
+          - node_key
+          - entity_id
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        sample_values:
+          - "Carlo Ancelotti"
+          - "Pep Guardiola"
+          - "Mikel Arteta"
+        description: Coach's full name
+        synonyms:
+          - coach_name
+          - full_name
+          - name
+      - name: NATIONALITY
+        expr: NATIONALITY
+        data_type: STRING
+        sample_values:
+          - Italy
+          - Spain
+          - Argentina
+        description: Coach's nationality
+        synonyms:
+          - country
+          - origin
+          - citizenship
+          - nation
+      - name: LICENSE_LEVEL
+        expr: LICENSE_LEVEL
+        data_type: STRING
+        sample_values:
+          - UEFA Pro
+          - UEFA A
+          - UEFA B
+        description: Coach's license level
+        synonyms:
+          - qualification
+          - certification
+          - license
+          - credentials
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional coach properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_CLUB
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_CLUB
+    description: "View of all clubs with extracted properties from KG_NODE"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Club node identifier
+        synonyms:
+          - club_id
+          - node_key
+          - entity_id
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        sample_values:
+          - "Real Madrid"
+          - "Manchester City"
+          - "Liverpool"
+        description: Club's official name
+        synonyms:
+          - club_name
+          - team_name
+          - organization_name
+          - name
+      - name: LEAGUE
+        expr: LEAGUE
+        data_type: STRING
+        sample_values:
+          - La Liga
+          - Premier League
+          - Bundesliga
+        description: League the club plays in
+        synonyms:
+          - competition
+          - division
+          - league_name
+          - championship
+      - name: COUNTRY
+        expr: COUNTRY
+        data_type: STRING
+        sample_values:
+          - Spain
+          - England
+          - Germany
+        description: Country where the club is based
+        synonyms:
+          - nation
+          - country_name
+          - location
+          - territory
+      - name: STADIUM
+        expr: STADIUM
+        data_type: STRING
+        sample_values:
+          - "Santiago Bernabéu"
+          - "Etihad Stadium"
+          - "Anfield"
+        description: Club's home stadium
+        synonyms:
+          - venue
+          - ground
+          - home_ground
+          - stadium_name
+      - name: FOUNDED_YEAR
+        expr: FOUNDED_YEAR
+        data_type: INTEGER
+        sample_values:
+          - 1902
+          - 1880
+          - 1892
+        description: Year the club was founded
+        synonyms:
+          - establishment_year
+          - founding_year
+          - creation_year
+          - year_founded
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional club properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_MATCH
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_MATCH
+    description: "View of all matches with extracted properties from KG_NODE"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Match node identifier
+        synonyms:
+          - match_id
+          - node_key
+          - entity_id
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        sample_values:
+          - "Manchester City vs Liverpool"
+          - "Real Madrid vs Bayern Munich"
+          - "Arsenal vs Chelsea"
+        description: Match description or title
+        synonyms:
+          - match_name
+          - fixture_name
+          - game_title
+          - name
+      - name: EVENT_DATE
+        expr: EVENT_DATE
+        data_type: DATE
+        sample_values:
+          - '2025-10-25'
+          - '2025-11-05'
+          - '2025-11-06'
+        description: Date when the match was played
+        synonyms:
+          - match_date
+          - game_date
+          - fixture_date
+          - date
+      - name: VENUE
+        expr: VENUE
+        data_type: STRING
+        sample_values:
+          - "Etihad Stadium"
+          - "Santiago Bernabéu"
+          - "Emirates Stadium"
+        description: Venue where the match was played
+        synonyms:
+          - stadium
+          - ground
+          - venue_name
+          - location
+      - name: COMPETITION
+        expr: COMPETITION
+        data_type: STRING
+        sample_values:
+          - Premier League
+          - Champions League
+          - La Liga
+        description: Competition or league name
+        synonyms:
+          - tournament
+          - league
+          - championship
+          - competition_name
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional match properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    facts:
+      - name: SCORE_HOME
+        expr: SCORE_HOME
+        data_type: INTEGER
+        sample_values:
+          - 2
+          - 3
+          - 1
+        description: Goals scored by the home team
+        synonyms:
+          - home_goals
+          - home_score
+          - host_goals
+      - name: SCORE_AWAY
+        expr: SCORE_AWAY
+        data_type: INTEGER
+        sample_values:
+          - 2
+          - 1
+          - 2
+        description: Goals scored by the away team
+        synonyms:
+          - away_goals
+          - away_score
+          - visitor_goals
+    primary_key:
+      columns:
+        - NODE_ID
+
+  # =====================================================
+  # RELATIONSHIP VIEWS
+  # =====================================================
+  - name: V_PLAYS_FOR
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_PLAYS_FOR
+    description: "View of player-to-club relationships with extracted properties"
+    dimensions:
+      - name: PLAYER_ID
+        expr: PLAYER_ID
+        data_type: STRING
+        description: Player node identifier
+        synonyms:
+          - player_node_id
+          - source_id
+          - player_key
+      - name: CLUB_ID
+        expr: CLUB_ID
+        data_type: STRING
+        description: Club node identifier
+        synonyms:
+          - club_node_id
+          - target_id
+          - club_key
+      - name: EDGE_TYPE
+        expr: EDGE_TYPE
+        data_type: STRING
+        sample_values:
+          - PLAYS_FOR
+        description: Type of relationship
+        synonyms:
+          - relationship_type
+          - link_type
+          - connection_type
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the contract
+        synonyms:
+          - start_date
+          - begin_date
+          - contract_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the contract
+        synonyms:
+          - end_date
+          - expiry_date
+          - contract_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+      - name: JERSEY_NUMBER
+        expr: JERSEY_NUMBER
+        data_type: INTEGER
+        sample_values:
+          - 9
+          - 5
+          - 4
+        description: Player's jersey number
+        synonyms:
+          - shirt_number
+          - squad_number
+          - number
+      - name: CONTRACT_VALUE
+        expr: CONTRACT_VALUE
+        data_type: DECIMAL(15,2)
+        sample_values:
+          - '50000000.00'
+          - '45000000.00'
+          - '35000000.00'
+        description: Total value of the contract
+        synonyms:
+          - contract_amount
+          - deal_value
+          - contract_price
+          - value
+    primary_key:
+      columns:
+        - PLAYER_ID
+        - CLUB_ID
+        - EFFECTIVE_START
+
+  - name: V_COACHES
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_COACHES
+    description: "View of coach-to-club relationships with extracted properties"
+    dimensions:
+      - name: COACH_ID
+        expr: COACH_ID
+        data_type: STRING
+        description: Coach node identifier
+        synonyms:
+          - coach_node_id
+          - source_id
+          - coach_key
+      - name: CLUB_ID
+        expr: CLUB_ID
+        data_type: STRING
+        description: Club node identifier
+        synonyms:
+          - club_node_id
+          - target_id
+          - club_key
+      - name: EDGE_TYPE
+        expr: EDGE_TYPE
+        data_type: STRING
+        sample_values:
+          - COACHES
+        description: Type of relationship
+        synonyms:
+          - relationship_type
+          - link_type
+          - connection_type
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the contract
+        synonyms:
+          - start_date
+          - begin_date
+          - contract_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the contract
+        synonyms:
+          - end_date
+          - expiry_date
+          - contract_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+      - name: CONTRACT_VALUE
+        expr: CONTRACT_VALUE
+        data_type: DECIMAL(15,2)
+        sample_values:
+          - '15000000.00'
+          - '20000000.00'
+          - '12000000.00'
+        description: Total value of the contract
+        synonyms:
+          - contract_amount
+          - deal_value
+          - contract_price
+          - value
+    primary_key:
+      columns:
+        - COACH_ID
+        - CLUB_ID
+        - EFFECTIVE_START
+
+  - name: V_PLAYED_IN
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_PLAYED_IN
+    description: "View of player-to-match relationships with performance statistics"
+    dimensions:
+      - name: PLAYER_ID
+        expr: PLAYER_ID
+        data_type: STRING
+        description: Player node identifier
+        synonyms:
+          - player_node_id
+          - source_id
+          - player_key
+      - name: MATCH_ID
+        expr: MATCH_ID
+        data_type: STRING
+        description: Match node identifier
+        synonyms:
+          - match_node_id
+          - target_id
+          - match_key
+      - name: EDGE_TYPE
+        expr: EDGE_TYPE
+        data_type: STRING
+        sample_values:
+          - PLAYED_IN
+        description: Type of relationship
+        synonyms:
+          - relationship_type
+          - link_type
+          - connection_type
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the appearance
+        synonyms:
+          - start_date
+          - begin_date
+          - appearance_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the appearance
+        synonyms:
+          - end_date
+          - expiry_date
+          - appearance_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+      - name: MINUTES_PLAYED
+        expr: MINUTES_PLAYED
+        data_type: INTEGER
+        sample_values:
+          - 90
+          - 85
+          - 90
+        description: Minutes played in the match
+        synonyms:
+          - playing_time
+          - minutes
+          - time_played
+      - name: GOALS_SCORED
+        expr: GOALS_SCORED
+        data_type: INTEGER
+        sample_values:
+          - 1
+          - 2
+          - 0
+        description: Goals scored by the player
+        synonyms:
+          - goals
+          - goals_scored
+          - scoring
+      - name: ASSISTS
+        expr: ASSISTS
+        data_type: INTEGER
+        sample_values:
+          - 1
+          - 0
+          - 1
+        description: Assists made by the player
+        synonyms:
+          - assists_made
+          - assists
+          - assists_count
+      - name: YELLOW_CARDS
+        expr: YELLOW_CARDS
+        data_type: INTEGER
+        sample_values:
+          - 0
+          - 1
+          - 0
+        description: Yellow cards received
+        synonyms:
+          - yellow_cards
+          - cautions
+          - bookings
+      - name: RED_CARDS
+        expr: RED_CARDS
+        data_type: INTEGER
+        sample_values:
+          - 0
+          - 0
+          - 0
+        description: Red cards received
+        synonyms:
+          - red_cards
+          - dismissals
+          - send_offs
+    primary_key:
+      columns:
+        - PLAYER_ID
+        - MATCH_ID
+        - EFFECTIVE_START
+
+  - name: V_HOME_TEAM
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_HOME_TEAM
+    description: "View of club-to-match relationships for home teams"
+    dimensions:
+      - name: CLUB_ID
+        expr: CLUB_ID
+        data_type: STRING
+        description: Club node identifier
+        synonyms:
+          - club_node_id
+          - source_id
+          - club_key
+      - name: MATCH_ID
+        expr: MATCH_ID
+        data_type: STRING
+        description: Match node identifier
+        synonyms:
+          - match_node_id
+          - target_id
+          - match_key
+      - name: EDGE_TYPE
+        expr: EDGE_TYPE
+        data_type: STRING
+        sample_values:
+          - HOME_TEAM
+        description: Type of relationship
+        synonyms:
+          - relationship_type
+          - link_type
+          - connection_type
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the relationship
+        synonyms:
+          - start_date
+          - begin_date
+          - relationship_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the relationship
+        synonyms:
+          - end_date
+          - expiry_date
+          - relationship_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+    primary_key:
+      columns:
+        - CLUB_ID
+        - MATCH_ID
+        - EFFECTIVE_START
+
+  - name: V_AWAY_TEAM
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_AWAY_TEAM
+    description: "View of club-to-match relationships for away teams"
+    dimensions:
+      - name: CLUB_ID
+        expr: CLUB_ID
+        data_type: STRING
+        description: Club node identifier
+        synonyms:
+          - club_node_id
+          - source_id
+          - club_key
+      - name: MATCH_ID
+        expr: MATCH_ID
+        data_type: STRING
+        description: Match node identifier
+        synonyms:
+          - match_node_id
+          - target_id
+          - match_key
+      - name: EDGE_TYPE
+        expr: EDGE_TYPE
+        data_type: STRING
+        sample_values:
+          - AWAY_TEAM
+        description: Type of relationship
+        synonyms:
+          - relationship_type
+          - link_type
+          - connection_type
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the relationship
+        synonyms:
+          - start_date
+          - begin_date
+          - relationship_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the relationship
+        synonyms:
+          - end_date
+          - expiry_date
+          - relationship_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+    primary_key:
+      columns:
+        - CLUB_ID
+        - MATCH_ID
+        - EFFECTIVE_START
+
+relationships:
+  # =====================================================
+  # PLAYER RELATIONSHIPS
+  # =====================================================
+  - name: player_plays_for_club
+    left_table: V_PLAYS_FOR
+    right_table: V_PLAYER
+    relationship_columns:
+      - left_column: PLAYER_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: plays_for_club
+    left_table: V_PLAYS_FOR
+    right_table: V_CLUB
+    relationship_columns:
+      - left_column: CLUB_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: player_played_in_match
+    left_table: V_PLAYED_IN
+    right_table: V_PLAYER
+    relationship_columns:
+      - left_column: PLAYER_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: played_in_match
+    left_table: V_PLAYED_IN
+    right_table: V_MATCH
+    relationship_columns:
+      - left_column: MATCH_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  # =====================================================
+  # COACH RELATIONSHIPS
+  # =====================================================
+  - name: coach_coaches_club
+    left_table: V_COACHES
+    right_table: V_COACH
+    relationship_columns:
+      - left_column: COACH_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: coaches_club
+    left_table: V_COACHES
+    right_table: V_CLUB
+    relationship_columns:
+      - left_column: CLUB_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  # =====================================================
+  # MATCH RELATIONSHIPS
+  # =====================================================
+  - name: match_home_team
+    left_table: V_HOME_TEAM
+    right_table: V_MATCH
+    relationship_columns:
+      - left_column: MATCH_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: home_team_club
+    left_table: V_HOME_TEAM
+    right_table: V_CLUB
+    relationship_columns:
+      - left_column: CLUB_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: match_away_team
+    left_table: V_AWAY_TEAM
+    right_table: V_MATCH
+    relationship_columns:
+      - left_column: MATCH_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: away_team_club
+    left_table: V_AWAY_TEAM
+    right_table: V_CLUB
+    relationship_columns:
+      - left_column: CLUB_ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+# =====================================================
+# METRICS - Pre-defined aggregations for Cortex Analyst
+# =====================================================
+metrics:
+  - name: total_goals
+    expr: SUM(GOALS_SCORED)
+    data_type: NUMBER
+    description: "Total goals scored by players across matches"
+    synonyms:
+      - goals_total
+      - sum_of_goals
+      - combined_goals
+
+  - name: total_assists
+    expr: SUM(ASSISTS)
+    data_type: NUMBER
+    description: "Total assists made by players across matches"
+    synonyms:
+      - assists_total
+      - sum_of_assists
+
+  - name: avg_minutes_played
+    expr: AVG(MINUTES_PLAYED)
+    data_type: NUMBER
+    description: "Average minutes played per match appearance"
+    synonyms:
+      - average_playing_time
+      - mean_minutes
+
+  - name: player_count
+    expr: COUNT(DISTINCT PLAYER_ID)
+    data_type: NUMBER
+    description: "Number of unique players"
+    synonyms:
+      - number_of_players
+      - distinct_players
+
+  - name: match_count
+    expr: COUNT(DISTINCT MATCH_ID)
+    data_type: NUMBER
+    description: "Number of unique matches"
+    synonyms:
+      - number_of_matches
+      - total_matches
+
+  - name: total_contract_value
+    expr: SUM(CONTRACT_VALUE)
+    data_type: NUMBER
+    description: "Total contract value in currency"
+    synonyms:
+      - combined_contract_value
+      - sum_of_contracts
+
+  - name: avg_contract_value
+    expr: AVG(CONTRACT_VALUE)
+    data_type: NUMBER
+    description: "Average contract value"
+    synonyms:
+      - mean_contract_value
+      - average_deal_value
+
+  - name: total_yellow_cards
+    expr: SUM(YELLOW_CARDS)
+    data_type: NUMBER
+    description: "Total yellow cards received"
+    synonyms:
+      - yellows_total
+      - cautions_total
+
+  - name: total_red_cards
+    expr: SUM(RED_CARDS)
+    data_type: NUMBER
+    description: "Total red cards received"
+    synonyms:
+      - reds_total
+      - dismissals_total
+
+# =====================================================
+# FILTERS - Named WHERE clauses for common patterns
+# =====================================================
+filters:
+  - name: active_contracts
+    expr: "EFFECTIVE_END IS NULL OR EFFECTIVE_END >= CURRENT_DATE()"
+    description: "Filter for currently active contracts (not expired)"
+    synonyms:
+      - current_contracts
+      - valid_contracts
+
+  - name: premier_league_clubs
+    expr: "LEAGUE = 'Premier League'"
+    description: "Filter for English Premier League clubs"
+    synonyms:
+      - english_top_flight
+      - epl_clubs
+
+  - name: la_liga_clubs
+    expr: "LEAGUE = 'La Liga'"
+    description: "Filter for Spanish La Liga clubs"
+    synonyms:
+      - spanish_league
+      - primera_division
+
+  - name: champions_league_matches
+    expr: "COMPETITION = 'Champions League'"
+    description: "Filter for UEFA Champions League matches"
+    synonyms:
+      - ucl_matches
+      - european_cup
+
+  - name: goal_scorers
+    expr: "GOALS_SCORED > 0"
+    description: "Filter for players who scored at least one goal"
+    synonyms:
+      - players_with_goals
+      - scorers
+
+  - name: current_year_matches
+    expr: "YEAR(EVENT_DATE) = YEAR(CURRENT_DATE())"
+    description: "Filter for matches in the current calendar year"
+    synonyms:
+      - this_year_matches
+      - recent_matches
+
+verified_queries:
+  # LEVEL 1: Basic Queries (Cortex Analyst - SQL-based)
+  - name: current_squad_analysis_v2
+    question: What is the current squad composition for Real Madrid?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        p.POSITION, 
+        p.NATIONALITY, 
+        p.NAME, 
+        pf.JERSEY_NUMBER, 
+        pf.EFFECTIVE_START as start_date
+      FROM V_PLAYER p 
+      JOIN V_PLAYS_FOR pf ON p.NODE_ID = pf.PLAYER_ID 
+      JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID 
+      WHERE c.NAME = 'Real Madrid' 
+        AND (pf.EFFECTIVE_END IS NULL OR pf.EFFECTIVE_END >= CURRENT_DATE())
+      ORDER BY p.POSITION, p.NAME
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: club_performance_metrics_v2
+    question: How has Manchester City performed in matches this year?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        COUNT(*) as total_matches, 
+        SUM(m.SCORE_HOME) as total_goals, 
+        AVG(m.SCORE_HOME) as avg_goals_per_match,
+        SUM(CASE WHEN m.SCORE_HOME > m.SCORE_AWAY THEN 1 ELSE 0 END) as wins,
+        SUM(CASE WHEN m.SCORE_HOME = m.SCORE_AWAY THEN 1 ELSE 0 END) as draws,
+        SUM(CASE WHEN m.SCORE_HOME < m.SCORE_AWAY THEN 1 ELSE 0 END) as losses
+      FROM V_MATCH m 
+      JOIN V_HOME_TEAM ht ON m.NODE_ID = ht.MATCH_ID 
+      JOIN V_CLUB c ON ht.CLUB_ID = c.NODE_ID 
+      WHERE c.NAME = 'Manchester City' 
+        AND YEAR(m.EVENT_DATE) = 2025
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: match_results_by_competition_v2
+    question: What are the Champions League match results for 2025?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        hc.NAME AS home_team, 
+        ac.NAME AS away_team, 
+        m.EVENT_DATE, 
+        m.SCORE_HOME, 
+        m.SCORE_AWAY,
+        CASE 
+          WHEN m.SCORE_HOME > m.SCORE_AWAY THEN hc.NAME 
+          WHEN m.SCORE_AWAY > m.SCORE_HOME THEN ac.NAME 
+          ELSE 'Draw' 
+        END as winner
+      FROM V_MATCH m 
+      JOIN V_HOME_TEAM ht ON m.NODE_ID = ht.MATCH_ID 
+      JOIN V_CLUB hc ON ht.CLUB_ID = hc.NODE_ID 
+      JOIN V_AWAY_TEAM at ON m.NODE_ID = at.MATCH_ID 
+      JOIN V_CLUB ac ON at.CLUB_ID = ac.NODE_ID 
+      WHERE m.COMPETITION = 'Champions League' 
+        AND YEAR(m.EVENT_DATE) = 2025 
+      ORDER BY m.EVENT_DATE DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # LEVEL 2: Intermediate Queries (Cortex Analyst - SQL-based)
+  - name: player_career_trajectory_v2
+    question: What are the contract details and career timeline for Lionel Messi across all his clubs?
+    sql: |
+      SELECT 
+        p.NAME, 
+        c.NAME as club_name, 
+        c.COUNTRY, 
+        pf.EFFECTIVE_START as start_date, 
+        pf.EFFECTIVE_END as end_date, 
+        DATEDIFF(day, pf.EFFECTIVE_START, pf.EFFECTIVE_END) as contract_duration_days, 
+        pf.JERSEY_NUMBER
+      FROM V_PLAYER p 
+      JOIN V_PLAYS_FOR pf ON p.NODE_ID = pf.PLAYER_ID 
+      JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID 
+      WHERE p.NAME = 'Lionel Messi' 
+      ORDER BY pf.EFFECTIVE_START
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: head_to_head_match_history_v2
+    question: What is the complete head-to-head match history between Real Madrid and Manchester City?
+    sql: |
+      SELECT 
+        m.EVENT_DATE, 
+        hc.NAME as home_team, 
+        ac.NAME as away_team, 
+        m.SCORE_HOME, 
+        m.SCORE_AWAY, 
+        m.COMPETITION,
+        CASE 
+          WHEN m.SCORE_HOME > m.SCORE_AWAY THEN hc.NAME 
+          WHEN m.SCORE_AWAY > m.SCORE_HOME THEN ac.NAME 
+          ELSE 'Draw' 
+        END as winner
+      FROM V_MATCH m 
+      JOIN V_HOME_TEAM ht ON m.NODE_ID = ht.MATCH_ID 
+      JOIN V_CLUB hc ON ht.CLUB_ID = hc.NODE_ID 
+      JOIN V_AWAY_TEAM at ON m.NODE_ID = at.MATCH_ID 
+      JOIN V_CLUB ac ON at.CLUB_ID = ac.NODE_ID 
+      WHERE (hc.NAME = 'Real Madrid' AND ac.NAME = 'Manchester City') 
+         OR (hc.NAME = 'Manchester City' AND ac.NAME = 'Real Madrid') 
+      ORDER BY m.EVENT_DATE DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: goal_scorers_in_specific_matches_v2
+    question: Which players have scored goals in El Clasico matches between Real Madrid and Barcelona?
+    sql: |
+      SELECT 
+        p.NAME, 
+        p.NATIONALITY, 
+        p.POSITION, 
+        COUNT(*) as match_goals, 
+        SUM(pi.GOALS_SCORED) as total_goals, 
+        LISTAGG(DISTINCT c.NAME, ', ') WITHIN GROUP (ORDER BY c.NAME) as clubs_played_for
+      FROM V_PLAYER p 
+      JOIN V_PLAYED_IN pi ON p.NODE_ID = pi.PLAYER_ID 
+      JOIN V_MATCH m ON pi.MATCH_ID = m.NODE_ID 
+      JOIN V_HOME_TEAM ht ON m.NODE_ID = ht.MATCH_ID 
+      JOIN V_CLUB hc ON ht.CLUB_ID = hc.NODE_ID 
+      JOIN V_AWAY_TEAM at ON m.NODE_ID = at.MATCH_ID 
+      JOIN V_CLUB ac ON at.CLUB_ID = ac.NODE_ID 
+      JOIN V_PLAYS_FOR pf ON p.NODE_ID = pf.PLAYER_ID 
+      JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID 
+      WHERE ((hc.NAME = 'Real Madrid' AND ac.NAME = 'Barcelona') 
+             OR (hc.NAME = 'Barcelona' AND ac.NAME = 'Real Madrid')) 
+        AND pi.GOALS_SCORED > 0 
+      GROUP BY p.NAME, p.NATIONALITY, p.POSITION 
+      ORDER BY total_goals DESC, match_goals DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # LEVEL 3: Advanced SQL Queries (Cortex Analyst - Complex SQL)
+  - name: player_teammate_analysis_v2
+    question: Who are all the players that Kylian Mbappé has played with throughout his career and what were their overlap periods?
+    sql: |
+      WITH player_clubs AS (
+        SELECT DISTINCT c.NAME as club_name 
+        FROM V_PLAYER p 
+        JOIN V_PLAYS_FOR pf ON p.NODE_ID = pf.PLAYER_ID 
+        JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID 
+        WHERE p.NAME = 'Kylian Mbappé'
+      ), 
+      player_teammates AS (
+        SELECT 
+          p2.NAME as teammate, 
+          c.NAME as club_name, 
+          pf2.EFFECTIVE_START as start_date, 
+          pf2.EFFECTIVE_END as end_date, 
+          DATEDIFF(day, pf2.EFFECTIVE_START, pf2.EFFECTIVE_END) as overlap_duration
+        FROM V_PLAYER p2 
+        JOIN V_PLAYS_FOR pf2 ON p2.NODE_ID = pf2.PLAYER_ID 
+        JOIN V_CLUB c ON pf2.CLUB_ID = c.NODE_ID 
+        JOIN player_clubs pc ON c.NAME = pc.club_name 
+        WHERE p2.NAME != 'Kylian Mbappé'
+      ) 
+      SELECT teammate, club_name, start_date, end_date, overlap_duration 
+      FROM player_teammates 
+      ORDER BY club_name, start_date
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: direct_transfer_connections_v2
+    question: What are the direct player transfers between Real Madrid and Manchester City?
+    sql: |
+      SELECT 
+        p.NAME, 
+        c1.NAME as from_club, 
+        c2.NAME as to_club, 
+        pf1.EFFECTIVE_END as transfer_date
+      FROM V_PLAYER p 
+      JOIN V_PLAYS_FOR pf1 ON p.NODE_ID = pf1.PLAYER_ID 
+      JOIN V_PLAYS_FOR pf2 ON p.NODE_ID = pf2.PLAYER_ID 
+        AND pf1.CLUB_ID != pf2.CLUB_ID 
+      JOIN V_CLUB c1 ON pf1.CLUB_ID = c1.NODE_ID 
+      JOIN V_CLUB c2 ON pf2.CLUB_ID = c2.NODE_ID 
+      WHERE (c1.NAME = 'Real Madrid' AND c2.NAME = 'Manchester City') 
+         OR (c1.NAME = 'Manchester City' AND c2.NAME = 'Real Madrid') 
+      ORDER BY pf1.EFFECTIVE_END DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: league_transfer_patterns_v2
+    question: What are the transfer patterns between Premier League and La Liga?
+    sql: |
+      WITH league_transfers AS (
+        SELECT 
+          p.NAME, 
+          c1.COUNTRY as from_league, 
+          c2.COUNTRY as to_league, 
+          c1.NAME as from_club, 
+          c2.NAME as to_club, 
+          pf1.EFFECTIVE_END as transfer_date
+        FROM V_PLAYER p 
+        JOIN V_PLAYS_FOR pf1 ON p.NODE_ID = pf1.PLAYER_ID 
+        JOIN V_PLAYS_FOR pf2 ON p.NODE_ID = pf2.PLAYER_ID 
+          AND pf1.CLUB_ID != pf2.CLUB_ID 
+        JOIN V_CLUB c1 ON pf1.CLUB_ID = c1.NODE_ID 
+        JOIN V_CLUB c2 ON pf2.CLUB_ID = c2.NODE_ID 
+        WHERE ((c1.COUNTRY = 'England' AND c2.COUNTRY = 'Spain') 
+               OR (c1.COUNTRY = 'Spain' AND c2.COUNTRY = 'England')) 
+          AND pf2.EFFECTIVE_START > pf1.EFFECTIVE_END
+      ), 
+      transfer_summary AS (
+        SELECT 
+          from_league, 
+          to_league, 
+          COUNT(*) as transfer_count, 
+          LISTAGG(DISTINCT NAME, ', ') WITHIN GROUP (ORDER BY NAME) as players_transferred
+        FROM league_transfers 
+        GROUP BY from_league, to_league
+      ) 
+      SELECT 
+        from_league, 
+        to_league, 
+        transfer_count, 
+        players_transferred, 
+        CASE 
+          WHEN from_league = 'England' THEN 'Premier League to La Liga' 
+          ELSE 'La Liga to Premier League' 
+        END as transfer_direction
+      FROM transfer_summary 
+      ORDER BY transfer_count DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # LEVEL 4: Expert SQL Queries (Cortex Analyst - Complex Analytics)
+  - name: player_performance_analysis_v2
+    question: Which players have the best goal-scoring records and performance metrics in recent matches?
+    sql: |
+      SELECT 
+        p.NAME, 
+        p.NATIONALITY, 
+        p.POSITION, 
+        COUNT(DISTINCT pi.MATCH_ID) as matches_played, 
+        SUM(pi.GOALS_SCORED) as total_goals, 
+        SUM(pi.ASSISTS) as total_assists, 
+        AVG(pi.GOALS_SCORED) as avg_goals_per_match, 
+        ROUND(SUM(pi.GOALS_SCORED) * 1.0 / COUNT(DISTINCT pi.MATCH_ID), 2) as goals_per_match_ratio
+      FROM V_PLAYER p 
+      JOIN V_PLAYED_IN pi ON p.NODE_ID = pi.PLAYER_ID 
+      JOIN V_MATCH m ON pi.MATCH_ID = m.NODE_ID 
+      WHERE m.EVENT_DATE >= '2025-01-01' 
+      GROUP BY p.NAME, p.NATIONALITY, p.POSITION 
+      HAVING SUM(pi.GOALS_SCORED) > 0 
+      ORDER BY goals_per_match_ratio DESC, total_goals DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: club_transfer_activity_v2
+    question: Which clubs have been most active in the transfer market?
+    sql: |
+      SELECT 
+        c.NAME as club_name, 
+        c.COUNTRY, 
+        COUNT(DISTINCT pf.PLAYER_ID) as players_in, 
+        COUNT(DISTINCT pf2.PLAYER_ID) as players_out, 
+        COUNT(DISTINCT pf.PLAYER_ID) - COUNT(DISTINCT pf2.PLAYER_ID) as net_transfers
+      FROM V_CLUB c 
+      LEFT JOIN V_PLAYS_FOR pf ON c.NODE_ID = pf.CLUB_ID 
+        AND pf.EFFECTIVE_START >= '2024-01-01' 
+      LEFT JOIN V_PLAYS_FOR pf2 ON c.NODE_ID = pf2.CLUB_ID 
+        AND pf2.EFFECTIVE_END >= '2024-01-01' 
+        AND pf2.EFFECTIVE_END IS NOT NULL 
+      GROUP BY c.NAME, c.COUNTRY 
+      HAVING COUNT(DISTINCT pf.PLAYER_ID) > 0 OR COUNT(DISTINCT pf2.PLAYER_ID) > 0 
+      ORDER BY (COUNT(DISTINCT pf.PLAYER_ID) + COUNT(DISTINCT pf2.PLAYER_ID)) DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: coach_succession_analysis_v2
+    question: What is the coaching succession pattern at major clubs?
+    sql: |
+      SELECT 
+        c.NAME as club_name, 
+        p1.NAME as previous_coach, 
+        p2.NAME as current_coach, 
+        cc1.EFFECTIVE_END as transition_date, 
+        DATEDIFF(day, cc1.EFFECTIVE_END, cc2.EFFECTIVE_START) as days_between_coaches
+      FROM V_CLUB c 
+      JOIN V_COACHES cc1 ON c.NODE_ID = cc1.CLUB_ID 
+      JOIN V_COACHES cc2 ON c.NODE_ID = cc2.CLUB_ID 
+        AND cc2.EFFECTIVE_START > cc1.EFFECTIVE_END 
+      JOIN V_COACH p1 ON cc1.COACH_ID = p1.NODE_ID 
+      JOIN V_COACH p2 ON cc2.COACH_ID = p2.NODE_ID 
+      WHERE cc1.EFFECTIVE_END IS NOT NULL 
+      ORDER BY c.NAME, cc1.EFFECTIVE_END DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # LEVEL 5: Recursive CTE Queries (Cortex Analyst - Graph Traversal with SQL)
+  - name: player_transfer_chain_v2
+    question: Show me Lionel Messi's complete transfer chain with chronological path visualization and career progression?
+    sql: |
+      WITH RECURSIVE
+        player_contracts_ranked AS (
+          SELECT
+            pf.PLAYER_ID,
+            p.NAME AS player_name,
+            c.NAME as club_name,
+            c.COUNTRY,
+            pf.EFFECTIVE_START as start_date,
+            pf.EFFECTIVE_END as end_date,
+            pf.CONTRACT_VALUE,
+            ROW_NUMBER() OVER (PARTITION BY pf.PLAYER_ID ORDER BY pf.EFFECTIVE_START ASC) as transfer_rank
+          FROM V_PLAYER p
+          JOIN V_PLAYS_FOR pf ON p.NODE_ID = pf.PLAYER_ID
+          JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID
+          WHERE p.NAME = 'Lionel Messi'
+        ),
+        transfer_chain AS (
+          SELECT
+            PLAYER_ID,
+            player_name,
+            club_name,
+            COUNTRY,
+            start_date,
+            end_date,
+            contract_value,
+            transfer_rank,
+            CAST(club_name AS VARCHAR(1000)) as transfer_path
+          FROM player_contracts_ranked
+          WHERE transfer_rank = 1
+          UNION ALL
+          SELECT
+            pcr.PLAYER_ID,
+            pcr.player_name,
+            pcr.club_name,
+            pcr.COUNTRY,
+            pcr.start_date,
+            pcr.end_date,
+            pcr.contract_value,
+            pcr.transfer_rank,
+            tc.transfer_path || ' → ' || pcr.club_name
+          FROM transfer_chain tc
+          JOIN player_contracts_ranked pcr
+            ON tc.PLAYER_ID = pcr.PLAYER_ID
+            AND tc.transfer_rank + 1 = pcr.transfer_rank
+        )
+      SELECT
+        player_name,
+        transfer_rank as transfer_level,
+        club_name as current_club,
+        COUNTRY,
+        start_date,
+        end_date,
+        contract_value,
+        DATEDIFF(day, start_date, COALESCE(end_date, CURRENT_DATE())) as days_at_club,
+        transfer_path as complete_career_path
+      FROM transfer_chain
+      ORDER BY transfer_rank;
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: club_network_depth_v2
+    question: Find all clubs within 3 degrees of separation from Real Madrid through shared players?
+    sql: |
+      WITH RECURSIVE club_network AS (
+        SELECT
+          c.NODE_ID as club_id,
+          c.NAME as club_name,
+          c.COUNTRY,
+          0 as degree_of_separation,
+          CAST('Real Madrid' AS VARCHAR(2000)) as connection_path,
+          CAST(NULL AS VARCHAR(100)) as connecting_player,
+          CAST(',' || c.NODE_ID || ',' AS VARCHAR(8000)) as visited_clubs
+        FROM V_CLUB c
+        WHERE c.NAME = 'Real Madrid'
+        UNION ALL
+        SELECT
+          c2.NODE_ID as club_id,
+          c2.NAME as club_name,
+          c2.COUNTRY,
+          cn.degree_of_separation + 1,
+          cn.connection_path || ' → (' || p.NAME || ') → ' || c2.NAME,
+          p.NAME as connecting_player,
+          cn.visited_clubs || c2.NODE_ID || ',' as visited_clubs
+        FROM club_network cn
+        JOIN V_PLAYS_FOR pf1 ON cn.club_id = pf1.CLUB_ID
+        JOIN V_PLAYER p ON pf1.PLAYER_ID = p.NODE_ID
+        JOIN V_PLAYS_FOR pf2 ON p.NODE_ID = pf2.PLAYER_ID
+        JOIN V_CLUB c2 ON pf2.CLUB_ID = c2.NODE_ID
+        WHERE cn.degree_of_separation < 3
+          AND NOT CONTAINS(cn.visited_clubs, ',' || c2.NODE_ID || ',')
+      )
+      SELECT
+        club_name,
+        COUNTRY,
+        degree_of_separation,
+        connecting_player,
+        connection_path
+      FROM (
+        SELECT
+          *,
+          ROW_NUMBER() OVER(PARTITION BY club_id ORDER BY degree_of_separation ASC) as rn
+        FROM club_network
+      )
+      WHERE degree_of_separation > 0
+        AND rn = 1
+      ORDER BY degree_of_separation, club_name;
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  - name: player_connection_path_v2
+    question: Trace the connection path between Kylian Mbappé and Lionel Messi through shared clubs?
+    sql: |
+      WITH RECURSIVE player_connections AS (
+        SELECT 
+          p1.NODE_ID as source_person_id,
+          p1.NAME as source_player,
+          c.NODE_ID as club_id,
+          c.NAME as club_name,
+          CAST(NULL AS STRING) as target_person_id,
+          CAST(NULL AS VARCHAR(100)) as target_player,
+          1 as hop_level,
+          CAST(p1.NAME || ' → ' || c.NAME AS VARCHAR(2000)) as connection_path,
+          FALSE as target_found
+        FROM V_PLAYER p1
+        JOIN V_PLAYS_FOR pf ON p1.NODE_ID = pf.PLAYER_ID
+        JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID
+        WHERE p1.NAME = 'Kylian Mbappé'
+        UNION ALL
+        SELECT 
+          pcx.source_person_id,
+          pcx.source_player,
+          c2.NODE_ID as club_id,
+          c2.NAME as club_name,
+          p2.NODE_ID as target_person_id,
+          p2.NAME as target_player,
+          pcx.hop_level + 1,
+          pcx.connection_path || ' → ' || p2.NAME || ' → ' || c2.NAME,
+          CASE WHEN p2.NAME = 'Lionel Messi' THEN TRUE ELSE FALSE END as target_found
+        FROM player_connections pcx
+        JOIN V_PLAYS_FOR pf1 ON pcx.club_id = pf1.CLUB_ID
+        JOIN V_PLAYER p2 ON pf1.PLAYER_ID = p2.NODE_ID
+        JOIN V_PLAYS_FOR pf2 ON p2.NODE_ID = pf2.PLAYER_ID
+        JOIN V_CLUB c2 ON pf2.CLUB_ID = c2.NODE_ID
+        WHERE p2.NODE_ID != pcx.source_person_id
+          AND pcx.hop_level < 5
+          AND NOT pcx.target_found
+      )
+      SELECT 
+        source_player,
+        target_player,
+        hop_level as degrees_of_separation,
+        connection_path,
+        club_name as final_club
+      FROM player_connections
+      WHERE target_found = TRUE
+      ORDER BY hop_level
+      LIMIT 1;
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # LEVEL 6: Advanced Graph Traversal Queries (Cortex Analyst - Complex Graph Operations)
+  
+  # =====================================================
+  # SINGLE TABLE QUERIES (V_PLAYER only)
+  # =====================================================
+  - name: french_players_detailed_v2
+    question: List all French players with their positions and birth dates
+    sql: |
+      SELECT 
+        NAME, 
+        POSITION, 
+        BIRTHDATE
+      FROM V_PLAYER 
+      WHERE NATIONALITY = 'France' 
+      ORDER BY NAME
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # =====================================================
+  # SINGLE TABLE QUERIES (V_PLAYS_FOR only)
+  # =====================================================
+  - name: active_contracts_timeline_v2
+    question: How many contracts are currently active by type?
+    sql: |
+      SELECT 
+        EDGE_TYPE, 
+        COUNT(*) as active_contracts 
+      FROM V_PLAYS_FOR 
+      WHERE (EFFECTIVE_END IS NULL OR EFFECTIVE_END >= CURRENT_DATE()) 
+      GROUP BY EDGE_TYPE 
+      ORDER BY active_contracts DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # =====================================================
+  # TWO-TABLE JOINS (V_PLAYS_FOR + V_PLAYER + V_CLUB)
+  # =====================================================
+  - name: current_active_contracts_v2
+    question: Which players currently have active contracts with their club names?
+    sql: |
+      SELECT 
+        p.NAME as player_name, 
+        c.NAME as club_name, 
+        pf.EFFECTIVE_START as start_date, 
+        pf.EFFECTIVE_END as end_date
+      FROM V_PLAYS_FOR pf 
+      JOIN V_PLAYER p ON pf.PLAYER_ID = p.NODE_ID 
+      JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID 
+      WHERE (pf.EFFECTIVE_END IS NULL OR pf.EFFECTIVE_END >= CURRENT_DATE()) 
+      ORDER BY c.NAME, p.NAME
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # =====================================================
+  # COMPLEX MULTI-JOIN QUERIES (Multiple relationships)
+  # =====================================================
+  - name: comprehensive_player_profile_v2
+    question: Create a comprehensive profile for each player including all contracts, performance statistics, career summary, and club history
+    sql: |
+      SELECT 
+        p.NAME as player_name, 
+        p.NATIONALITY, 
+        p.POSITION, 
+        p.BIRTHDATE, 
+        COUNT(DISTINCT pf.CLUB_ID) as clubs_played_for, 
+        LISTAGG(DISTINCT c.NAME, ', ') WITHIN GROUP (ORDER BY c.NAME) as club_names, 
+        MIN(pf.EFFECTIVE_START) as career_start, 
+        MAX(pf.EFFECTIVE_END) as career_end, 
+        COALESCE(perf.total_goals, 0) as total_goals, 
+        COALESCE(perf.total_assists, 0) as total_assists, 
+        COALESCE(perf.matches_played, 0) as matches_played, 
+        COALESCE(perf.avg_minutes, 0) as avg_minutes_per_match
+      FROM V_PLAYER p 
+      LEFT JOIN V_PLAYS_FOR pf ON p.NODE_ID = pf.PLAYER_ID 
+      LEFT JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID 
+      LEFT JOIN (
+        SELECT 
+          pi.PLAYER_ID, 
+          SUM(pi.GOALS_SCORED) as total_goals, 
+          SUM(pi.ASSISTS) as total_assists, 
+          COUNT(*) as matches_played, 
+          AVG(pi.MINUTES_PLAYED) as avg_minutes 
+        FROM V_PLAYED_IN pi 
+        GROUP BY pi.PLAYER_ID
+      ) perf ON p.NODE_ID = perf.PLAYER_ID 
+      GROUP BY p.NAME, p.NATIONALITY, p.POSITION, p.BIRTHDATE, perf.total_goals, perf.total_assists, perf.matches_played, perf.avg_minutes 
+      ORDER BY total_goals DESC, matches_played DESC
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # =====================================================
+  # MULTIPLE-HOP QUERIES (Graph traversal)
+  # =====================================================
+  - name: comprehensive_teammate_network_v2
+    question: Find all players who have been teammates through shared clubs and show their connection path
+    sql: |
+      WITH player_clubs AS (
+        SELECT 
+          pf.PLAYER_ID, 
+          p.NAME as player_name, 
+          pf.CLUB_ID, 
+          c.NAME as club_name, 
+          pf.EFFECTIVE_START as start_date, 
+          pf.EFFECTIVE_END as end_date
+        FROM V_PLAYS_FOR pf 
+        JOIN V_PLAYER p ON pf.PLAYER_ID = p.NODE_ID 
+        JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID
+      ), 
+      teammate_connections AS (
+        SELECT 
+          pc1.player_name as player1, 
+          pc2.player_name as player2, 
+          pc1.club_name, 
+          pc1.start_date as overlap_start, 
+          LEAST(pc1.end_date, pc2.end_date) as overlap_end
+        FROM player_clubs pc1 
+        JOIN player_clubs pc2 ON pc1.club_id = pc2.club_id 
+          AND pc1.player_id < pc2.player_id 
+        WHERE pc1.start_date <= pc2.end_date 
+          AND pc2.start_date <= pc1.end_date
+      ) 
+      SELECT 
+        player1, 
+        player2, 
+        LISTAGG(club_name, ', ') WITHIN GROUP (ORDER BY club_name) as shared_clubs, 
+        COUNT(*) as clubs_together, 
+        MIN(overlap_start) as first_teammate_date, 
+        MAX(overlap_end) as last_teammate_date
+      FROM teammate_connections 
+      GROUP BY player1, player2 
+      ORDER BY clubs_together DESC, player1, player2
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+  # =====================================================
+  # SELF-JOIN QUERIES (Same table multiple times)
+  # =====================================================
+  - name: club_rivalry_analysis_v2
+    question: Find clubs that have exchanged players and analyze the transfer patterns between them
+    sql: |
+      WITH club_transfers AS (
+        SELECT 
+          pf.PLAYER_ID, 
+          p.NAME as player_name, 
+          pf.CLUB_ID, 
+          c.NAME as club_name, 
+          pf.EFFECTIVE_START as start_date, 
+          pf.EFFECTIVE_END as end_date
+        FROM V_PLAYS_FOR pf 
+        JOIN V_PLAYER p ON pf.PLAYER_ID = p.NODE_ID 
+        JOIN V_CLUB c ON pf.CLUB_ID = c.NODE_ID
+      ), 
+      transfer_pairs AS (
+        SELECT 
+          t1.club_name as from_club, 
+          t2.club_name as to_club, 
+          t1.player_name, 
+          t1.end_date as transfer_date
+        FROM club_transfers t1 
+        JOIN club_transfers t2 ON t1.player_id = t2.player_id 
+          AND t1.club_id != t2.club_id 
+        WHERE t2.start_date > t1.end_date
+      ), 
+      club_rivalries AS (
+        SELECT 
+          from_club, 
+          to_club, 
+          COUNT(*) as transfers_from_to, 
+          LISTAGG(player_name, ', ') WITHIN GROUP (ORDER BY player_name) as players_transferred
+        FROM transfer_pairs 
+        GROUP BY from_club, to_club
+      ), 
+      mutual_transfers AS (
+        SELECT 
+          cr1.from_club as club1, 
+          cr1.to_club as club2, 
+          cr1.transfers_from_to as club1_to_club2, 
+          COALESCE(cr2.transfers_from_to, 0) as club2_to_club1, 
+          cr1.players_transferred as club1_players, 
+          cr2.players_transferred as club2_players
+        FROM club_rivalries cr1 
+        LEFT JOIN club_rivalries cr2 ON cr1.from_club = cr2.to_club 
+          AND cr1.to_club = cr2.from_club 
+        WHERE cr1.transfers_from_to > 0
+      ) 
+      SELECT 
+        club1, 
+        club2, 
+        club1_to_club2, 
+        club2_to_club1, 
+        (club1_to_club2 + club2_to_club1) as total_exchanges
+      FROM mutual_transfers 
+      ORDER BY total_exchanges DESC, club1, club2;
+    verified_by: Soccer Knowledge Graph Model V2
+    verified_at: 1747672000
+
+custom_instructions: |-
+  This is a Knowledge Graph semantic model with node-edge architecture for soccer data.
+  
+  ENTITY TABLES (nodes):
+  - V_PLAYER: Player entities with NODE_ID as primary key
+  - V_COACH: Coach entities with NODE_ID as primary key
+  - V_CLUB: Club entities with NODE_ID as primary key
+  - V_MATCH: Match event entities with NODE_ID as primary key
+  
+  RELATIONSHIP TABLES (edges):
+  - V_PLAYS_FOR: Player-to-Club contracts (PLAYER_ID -> CLUB_ID)
+  - V_COACHES: Coach-to-Club contracts (COACH_ID -> CLUB_ID)
+  - V_PLAYED_IN: Player match appearances (PLAYER_ID -> MATCH_ID)
+  - V_HOME_TEAM: Club as home team in match (CLUB_ID -> MATCH_ID)
+  - V_AWAY_TEAM: Club as away team in match (CLUB_ID -> MATCH_ID)
+  
+  TEMPORAL FILTERING:
+  - For "current" or "active" queries: EFFECTIVE_END IS NULL OR EFFECTIVE_END >= CURRENT_DATE()
+  - Include all historical data unless specifically asking for current/active information
+  
+  JOIN PATTERNS:
+  - Always join entities through relationship tables, not directly
+  - Example: Player to Club via V_PLAYS_FOR, not direct join
+  - For matches with teams: JOIN V_HOME_TEAM and V_AWAY_TEAM separately
+  
+  QUERY BEST PRACTICES:
+  - Use NODE_ID columns to join entity tables with relationship tables
+  - For player performance: join V_PLAYER -> V_PLAYED_IN -> V_MATCH
+  - For contract details: join entity -> relationship view (V_PLAYS_FOR or V_COACHES)
+  - Focus on won matches and successful outcomes unless specifically asked about losses
+  - When analyzing contracts, prioritize current/active contracts unless historical analysis is requested
+
+module_custom_instructions:
+  sql_generation: |-
+    Knowledge Graph SQL Generation Rules:
+    1. Entity tables use NODE_ID as primary key
+    2. Relationship tables use SRC_ID (renamed to PLAYER_ID, COACH_ID, CLUB_ID) and DST_ID (renamed to CLUB_ID, MATCH_ID)
+    3. For temporal queries, always check EFFECTIVE_START and EFFECTIVE_END
+    4. Use the pre-defined filters (active_contracts, premier_league_clubs, etc.) when applicable
+    5. Use the pre-defined metrics (total_goals, total_assists, etc.) for aggregations
+    6. For head-to-head analysis: join V_MATCH with both V_HOME_TEAM and V_AWAY_TEAM
+  
+  question_categorization: |-
+    Treat the following as UNAMBIGUOUS_SQL:
+    - Squad/roster queries for specific clubs
+    - Player statistics and performance queries
+    - Match result queries with specific teams or competitions
+    - Contract/transfer history queries
+    - Head-to-head match analysis between clubs

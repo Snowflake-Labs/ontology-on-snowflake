@@ -1,0 +1,1438 @@
+# Copyright 2026 Snowflake Inc.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: soccer_knowledge_graph_ontology
+description: Soccer ontology semantic model providing abstract classes (Person, Organization, Event) and relationships (works_for, participates_in, affiliated_with) that unify concrete entity views through metadata-driven dynamic view generation
+tables:
+  # =====================================================
+  # ONTOLOGY ABSTRACT CLASSES
+  # =====================================================
+  - name: ONT_PERSON
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: VW_ONT_PERSON
+    description: "Abstract Person class unioning Player and Coach views - dynamically generated from ontology metadata"
+    dimensions:
+      - name: ID
+        expr: ID
+        data_type: STRING
+        description: Person identifier (unified from concrete views)
+        synonyms:
+          - person_id
+          - entity_id
+          - individual_id
+          - node_id
+      - name: SUBTYPE
+        expr: SUBTYPE
+        data_type: STRING
+        sample_values:
+          - Player
+          - Coach
+        description: Concrete type of person (Player or Coach)
+        synonyms:
+          - person_type
+          - role_type
+          - category
+          - concrete_class
+      - name: SRC_VIEW
+        expr: SRC_VIEW
+        data_type: STRING
+        sample_values:
+          - V_PLAYER
+          - V_COACH
+        description: Source view from which this person was materialized
+        synonyms:
+          - source
+          - origin_view
+          - source_table
+    primary_key:
+      columns:
+        - ID
+
+  - name: ONT_ORGANIZATION
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: VW_ONT_ORGANIZATION
+    description: "Abstract Organization class unioning Club views - dynamically generated from ontology metadata"
+    dimensions:
+      - name: ID
+        expr: ID
+        data_type: STRING
+        description: Organization identifier (unified from concrete views)
+        synonyms:
+          - organization_id
+          - entity_id
+          - org_id
+          - node_id
+      - name: SUBTYPE
+        expr: SUBTYPE
+        data_type: STRING
+        sample_values:
+          - Club
+        description: Concrete type of organization (Club, Federation, etc.)
+        synonyms:
+          - organization_type
+          - org_type
+          - category
+          - concrete_class
+      - name: SRC_VIEW
+        expr: SRC_VIEW
+        data_type: STRING
+        sample_values:
+          - V_CLUB
+        description: Source view from which this organization was materialized
+        synonyms:
+          - source
+          - origin_view
+          - source_table
+    primary_key:
+      columns:
+        - ID
+
+  - name: ONT_EVENT
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: VW_ONT_EVENT
+    description: "Abstract Event class unioning Match views - dynamically generated from ontology metadata"
+    dimensions:
+      - name: ID
+        expr: ID
+        data_type: STRING
+        description: Event identifier (unified from concrete views)
+        synonyms:
+          - event_id
+          - entity_id
+          - node_id
+      - name: SUBTYPE
+        expr: SUBTYPE
+        data_type: STRING
+        sample_values:
+          - Match
+        description: Concrete type of event (Match, Tournament, etc.)
+        synonyms:
+          - event_type
+          - category
+          - concrete_class
+      - name: SRC_VIEW
+        expr: SRC_VIEW
+        data_type: STRING
+        sample_values:
+          - V_MATCH
+        description: Source view from which this event was materialized
+        synonyms:
+          - source
+          - origin_view
+          - source_table
+    primary_key:
+      columns:
+        - ID
+
+  # =====================================================
+  # CONCRETE ENTITY VIEWS (for attribute enrichment)
+  # These are included so queries can join ontology views
+  # to concrete views to retrieve detailed attributes
+  # =====================================================
+  - name: V_PLAYER
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_PLAYER
+    description: "Concrete player view with detailed attributes (NAME, POSITION, NATIONALITY, BIRTHDATE)"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Player node identifier
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        description: Player's full name
+      - name: POSITION
+        expr: POSITION
+        data_type: STRING
+        description: Player's position
+      - name: NATIONALITY
+        expr: NATIONALITY
+        data_type: STRING
+        description: Player's nationality
+      - name: BIRTHDATE
+        expr: BIRTHDATE
+        data_type: DATE
+        description: Player's date of birth
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_COACH
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_COACH
+    description: "Concrete coach view with detailed attributes (NAME, NATIONALITY, LICENSE_LEVEL)"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Coach node identifier
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        description: Coach's full name
+      - name: NATIONALITY
+        expr: NATIONALITY
+        data_type: STRING
+        description: Coach's nationality
+      - name: LICENSE_LEVEL
+        expr: LICENSE_LEVEL
+        data_type: STRING
+        description: Coach's license level
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_CLUB
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_CLUB
+    description: "Concrete club view with detailed attributes (NAME, LEAGUE, COUNTRY, STADIUM, FOUNDED_YEAR)"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Club node identifier
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        description: Club's official name
+      - name: LEAGUE
+        expr: LEAGUE
+        data_type: STRING
+        description: League the club plays in
+      - name: COUNTRY
+        expr: COUNTRY
+        data_type: STRING
+        description: Country where the club is based
+      - name: STADIUM
+        expr: STADIUM
+        data_type: STRING
+        description: Club's home stadium
+      - name: FOUNDED_YEAR
+        expr: FOUNDED_YEAR
+        data_type: INTEGER
+        description: Year the club was founded
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_MATCH
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_MATCH
+    description: "Concrete match view with detailed attributes (NAME, EVENT_DATE, VENUE, COMPETITION, SCORE_HOME, SCORE_AWAY)"
+    dimensions:
+      - name: NODE_ID
+        expr: NODE_ID
+        data_type: STRING
+        description: Match node identifier
+      - name: NAME
+        expr: NAME
+        data_type: STRING
+        description: Match description or title
+      - name: EVENT_DATE
+        expr: EVENT_DATE
+        data_type: DATE
+        description: Date when the match was played
+      - name: VENUE
+        expr: VENUE
+        data_type: STRING
+        description: Venue where the match was played
+      - name: COMPETITION
+        expr: COMPETITION
+        data_type: STRING
+        description: Competition or league name
+    facts:
+      - name: SCORE_HOME
+        expr: SCORE_HOME
+        data_type: INTEGER
+        description: Goals scored by the home team
+      - name: SCORE_AWAY
+        expr: SCORE_AWAY
+        data_type: INTEGER
+        description: Goals scored by the away team
+    primary_key:
+      columns:
+        - NODE_ID
+
+  - name: V_PLAYED_IN
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: V_PLAYED_IN
+    description: "Player performance statistics in matches"
+    dimensions:
+      - name: PLAYER_ID
+        expr: PLAYER_ID
+        data_type: STRING
+        description: Player node identifier
+      - name: MATCH_ID
+        expr: MATCH_ID
+        data_type: STRING
+        description: Match node identifier
+    facts:
+      - name: MINUTES_PLAYED
+        expr: MINUTES_PLAYED
+        data_type: INTEGER
+        description: Minutes played in the match
+      - name: GOALS_SCORED
+        expr: GOALS_SCORED
+        data_type: INTEGER
+        description: Goals scored by the player
+      - name: ASSISTS
+        expr: ASSISTS
+        data_type: INTEGER
+        description: Assists made by the player
+      - name: YELLOW_CARDS
+        expr: YELLOW_CARDS
+        data_type: INTEGER
+        description: Yellow cards received
+      - name: RED_CARDS
+        expr: RED_CARDS
+        data_type: INTEGER
+        description: Red cards received
+    primary_key:
+      columns:
+        - PLAYER_ID
+        - MATCH_ID
+
+  # =====================================================
+  # UNIFIED RELATIONSHIP VIEW (for advanced graph queries)
+  # =====================================================
+  - name: REL_RESOLVED
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: REL_RESOLVED
+    description: "Unified view of all relationships with resolved type information"
+    dimensions:
+      - name: REL_NAME
+        expr: REL_NAME
+        data_type: STRING
+        description: Relationship name (e.g., PLAYS_FOR, COACHES, PLAYED_IN, HOME_TEAM, AWAY_TEAM)
+        synonyms:
+          - relationship_type
+          - edge_type
+      - name: SRC_ID
+        expr: SRC_ID
+        data_type: STRING
+        description: Source node ID
+        synonyms:
+          - source_id
+          - from_id
+      - name: SRC_CLASS
+        expr: SRC_CLASS
+        data_type: STRING
+        description: Source node class type
+        sample_values:
+          - Player
+          - Coach
+          - Club
+        synonyms:
+          - source_type
+          - source_class
+      - name: DST_ID
+        expr: DST_ID
+        data_type: STRING
+        description: Destination node ID
+        synonyms:
+          - target_id
+          - to_id
+      - name: DST_CLASS
+        expr: DST_CLASS
+        data_type: STRING
+        description: Destination node class type
+        sample_values:
+          - Club
+          - Match
+        synonyms:
+          - target_type
+          - destination_class
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Relationship start date
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: Relationship end date
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+
+  # =====================================================
+  # ONTOLOGY ABSTRACT RELATIONSHIPS
+  # =====================================================
+  - name: ONT_WORKS_FOR
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: VW_ONT_WORKS_FOR
+    description: "Abstract works_for relationship unioning plays_for and coaches relationships - dynamically generated from ontology metadata"
+    dimensions:
+      - name: SUBJECT_ID
+        expr: SUBJECT_ID
+        data_type: STRING
+        description: Person (subject) identifier
+        synonyms:
+          - person_id
+          - worker_id
+          - employee_id
+          - source_id
+      - name: SUBJECT_CLASS
+        expr: SUBJECT_CLASS
+        data_type: STRING
+        sample_values:
+          - Player
+          - Coach
+        description: Concrete class of the subject
+        synonyms:
+          - subject_type
+          - person_type
+          - worker_type
+      - name: OBJECT_ID
+        expr: OBJECT_ID
+        data_type: STRING
+        description: Organization (object) identifier
+        synonyms:
+          - organization_id
+          - club_id
+          - employer_id
+          - target_id
+      - name: OBJECT_CLASS
+        expr: OBJECT_CLASS
+        data_type: STRING
+        sample_values:
+          - Club
+        description: Concrete class of the object
+        synonyms:
+          - object_type
+          - organization_type
+          - employer_type
+      - name: VIA_REL
+        expr: VIA_REL
+        data_type: STRING
+        sample_values:
+          - PLAYS_FOR
+          - COACHES
+        description: Concrete relationship type
+        synonyms:
+          - relationship_type
+          - relation_name
+          - concrete_relation
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the employment relationship
+        synonyms:
+          - start_date
+          - begin_date
+          - contract_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the employment relationship
+        synonyms:
+          - end_date
+          - expiry_date
+          - contract_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+    primary_key:
+      columns:
+        - SUBJECT_ID
+        - OBJECT_ID
+        - VIA_REL
+
+  - name: ONT_PARTICIPATES_IN
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: VW_ONT_PARTICIPATES_IN
+    description: "Abstract participates_in relationship unioning played_in, home_team, and away_team relationships - dynamically generated from ontology metadata"
+    dimensions:
+      - name: SUBJECT_ID
+        expr: SUBJECT_ID
+        data_type: STRING
+        description: Entity (subject) identifier - can be Player or Club
+        synonyms:
+          - entity_id
+          - participant_id
+          - source_id
+      - name: SUBJECT_CLASS
+        expr: SUBJECT_CLASS
+        data_type: STRING
+        sample_values:
+          - Player
+          - Club
+        description: Concrete class of the subject
+        synonyms:
+          - subject_type
+          - participant_type
+          - entity_type
+      - name: OBJECT_ID
+        expr: OBJECT_ID
+        data_type: STRING
+        description: Event (object) identifier
+        synonyms:
+          - event_id
+          - match_id
+          - target_id
+      - name: OBJECT_CLASS
+        expr: OBJECT_CLASS
+        data_type: STRING
+        sample_values:
+          - Match
+        description: Concrete class of the object
+        synonyms:
+          - object_type
+          - event_type
+          - match_type
+      - name: VIA_REL
+        expr: VIA_REL
+        data_type: STRING
+        sample_values:
+          - PLAYED_IN
+        description: Concrete relationship type (Note: HOME_TEAM and AWAY_TEAM are in ONT_AFFILIATED_WITH)
+        synonyms:
+          - relationship_type
+          - participation_type
+          - concrete_relation
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the participation relationship
+        synonyms:
+          - start_date
+          - begin_date
+          - participation_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the participation relationship
+        synonyms:
+          - end_date
+          - expiry_date
+          - participation_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+    primary_key:
+      columns:
+        - SUBJECT_ID
+        - OBJECT_ID
+        - VIA_REL
+
+  - name: ONT_AFFILIATED_WITH
+    base_table:
+      database: ONTOLOGY_DB
+      schema: SOCCER_KG
+      table: VW_ONT_AFFILIATED_WITH
+    description: "Abstract affiliated_with relationship spanning multiple concrete relationships - dynamically generated from ontology metadata"
+    dimensions:
+      - name: SUBJECT_ID
+        expr: SUBJECT_ID
+        data_type: STRING
+        description: Entity (subject) identifier
+        synonyms:
+          - entity_id
+          - person_id
+          - source_id
+      - name: SUBJECT_CLASS
+        expr: SUBJECT_CLASS
+        data_type: STRING
+        sample_values:
+          - Player
+          - Coach
+        description: Concrete class of the subject
+        synonyms:
+          - subject_type
+          - entity_type
+      - name: OBJECT_ID
+        expr: OBJECT_ID
+        data_type: STRING
+        description: Organization (object) identifier
+        synonyms:
+          - organization_id
+          - club_id
+          - target_id
+      - name: OBJECT_CLASS
+        expr: OBJECT_CLASS
+        data_type: STRING
+        sample_values:
+          - Club
+        description: Concrete class of the object
+        synonyms:
+          - object_type
+          - organization_type
+      - name: VIA_REL
+        expr: VIA_REL
+        data_type: STRING
+        sample_values:
+          - HOME_TEAM
+          - AWAY_TEAM
+        description: Concrete relationship type
+        synonyms:
+          - relationship_type
+          - affiliation_type
+          - concrete_relation
+      - name: PROPS
+        expr: PROPS
+        data_type: VARIANT
+        description: Additional relationship properties
+        synonyms:
+          - properties
+          - attributes
+          - metadata
+    time_dimensions:
+      - name: EFFECTIVE_START
+        expr: EFFECTIVE_START
+        data_type: DATE
+        description: Start date of the affiliation
+        synonyms:
+          - start_date
+          - begin_date
+          - affiliation_start
+      - name: EFFECTIVE_END
+        expr: EFFECTIVE_END
+        data_type: DATE
+        description: End date of the affiliation
+        synonyms:
+          - end_date
+          - expiry_date
+          - affiliation_end
+    facts:
+      - name: WEIGHT
+        expr: WEIGHT
+        data_type: FLOAT
+        description: Relationship weight
+        synonyms:
+          - relationship_weight
+          - edge_weight
+          - connection_strength
+    primary_key:
+      columns:
+        - SUBJECT_ID
+        - OBJECT_ID
+        - VIA_REL
+
+relationships:
+  # =====================================================
+  # ONTOLOGY RELATIONSHIPS
+  # =====================================================
+  - name: ont_person_works_for_organization
+    left_table: ONT_WORKS_FOR
+    right_table: ONT_PERSON
+    relationship_columns:
+      - left_column: SUBJECT_ID
+        right_column: ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: ont_works_for_organization
+    left_table: ONT_WORKS_FOR
+    right_table: ONT_ORGANIZATION
+    relationship_columns:
+      - left_column: OBJECT_ID
+        right_column: ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: ont_entity_participates_in_event
+    left_table: ONT_PARTICIPATES_IN
+    right_table: ONT_EVENT
+    relationship_columns:
+      - left_column: OBJECT_ID
+        right_column: ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: ont_person_affiliated_with_organization
+    left_table: ONT_AFFILIATED_WITH
+    right_table: ONT_PERSON
+    relationship_columns:
+      - left_column: SUBJECT_ID
+        right_column: ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  - name: ont_affiliated_with_organization
+    left_table: ONT_AFFILIATED_WITH
+    right_table: ONT_ORGANIZATION
+    relationship_columns:
+      - left_column: OBJECT_ID
+        right_column: ID
+    join_type: left_outer
+    relationship_type: many_to_one
+
+  # =====================================================
+  # ONTOLOGY-TO-CONCRETE ENRICHMENT RELATIONSHIPS
+  # These relationships enable joining abstract ontology views
+  # back to concrete views to retrieve detailed attributes
+  # =====================================================
+  - name: ont_person_to_player
+    left_table: ONT_PERSON
+    right_table: V_PLAYER
+    relationship_columns:
+      - left_column: ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: one_to_one
+
+  - name: ont_person_to_coach
+    left_table: ONT_PERSON
+    right_table: V_COACH
+    relationship_columns:
+      - left_column: ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: one_to_one
+
+  - name: ont_organization_to_club
+    left_table: ONT_ORGANIZATION
+    right_table: V_CLUB
+    relationship_columns:
+      - left_column: ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: one_to_one
+
+  - name: ont_event_to_match
+    left_table: ONT_EVENT
+    right_table: V_MATCH
+    relationship_columns:
+      - left_column: ID
+        right_column: NODE_ID
+    join_type: left_outer
+    relationship_type: one_to_one
+
+  - name: ont_participates_in_to_played_in
+    left_table: ONT_PARTICIPATES_IN
+    right_table: V_PLAYED_IN
+    relationship_columns:
+      - left_column: SUBJECT_ID
+        right_column: PLAYER_ID
+      - left_column: OBJECT_ID
+        right_column: MATCH_ID
+    join_type: left_outer
+    relationship_type: one_to_one
+
+# =====================================================
+# METRICS - Ontology-level aggregations
+# =====================================================
+metrics:
+  - name: entity_count
+    expr: COUNT(DISTINCT ID)
+    data_type: NUMBER
+    description: "Count of entities across abstract classes"
+    synonyms:
+      - number_of_entities
+      - total_entities
+
+  - name: person_count
+    expr: COUNT(DISTINCT SUBJECT_ID)
+    data_type: NUMBER
+    description: "Count of persons in relationships"
+    synonyms:
+      - number_of_people
+      - personnel_count
+
+  - name: relationship_count
+    expr: COUNT(*)
+    data_type: NUMBER
+    description: "Count of relationships"
+    synonyms:
+      - edge_count
+      - connection_count
+
+  - name: active_relationship_count
+    expr: "COUNT(CASE WHEN EFFECTIVE_END IS NULL OR EFFECTIVE_END >= CURRENT_DATE() THEN 1 END)"
+    data_type: NUMBER
+    description: "Count of currently active relationships"
+    synonyms:
+      - current_relationships
+      - active_edges
+
+  - name: avg_relationship_duration_days
+    expr: "AVG(DATEDIFF(day, EFFECTIVE_START, COALESCE(EFFECTIVE_END, CURRENT_DATE())))"
+    data_type: NUMBER
+    description: "Average duration of relationships in days"
+    synonyms:
+      - mean_tenure
+      - average_duration
+
+# =====================================================
+# FILTERS - Ontology-level filters for common patterns
+# =====================================================
+filters:
+  - name: players_only
+    expr: "SUBTYPE = 'Player'"
+    description: "Filter for Player subtype in Person class"
+    synonyms:
+      - only_players
+      - player_filter
+
+  - name: coaches_only
+    expr: "SUBTYPE = 'Coach'"
+    description: "Filter for Coach subtype in Person class"
+    synonyms:
+      - only_coaches
+      - coach_filter
+
+  - name: clubs_only
+    expr: "SUBTYPE = 'Club'"
+    description: "Filter for Club subtype in Organization class"
+    synonyms:
+      - only_clubs
+      - club_filter
+
+  - name: matches_only
+    expr: "SUBTYPE = 'Match'"
+    description: "Filter for Match subtype in Event class"
+    synonyms:
+      - only_matches
+      - match_filter
+
+  - name: active_relationships
+    expr: "EFFECTIVE_END IS NULL OR EFFECTIVE_END >= CURRENT_DATE()"
+    description: "Filter for currently active relationships"
+    synonyms:
+      - current_only
+      - active_only
+
+  - name: plays_for_relationships
+    expr: "VIA_REL = 'PLAYS_FOR'"
+    description: "Filter for PLAYS_FOR concrete relationships"
+    synonyms:
+      - player_contracts
+      - playing_relationships
+
+  - name: coaches_relationships
+    expr: "VIA_REL = 'COACHES'"
+    description: "Filter for COACHES concrete relationships"
+    synonyms:
+      - coaching_contracts
+      - coaching_relationships
+
+verified_queries:
+  # =====================================================
+  # LEVEL 1: Simple Cross-Type Queries
+  # =====================================================
+  - name: real_madrid_all_personnel
+    question: Who are all the people associated with Real Madrid, including both players and coaching staff?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT DISTINCT
+        p.ID as person_id,
+        p.SUBTYPE as role,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+        END as person_name,
+        vcl.NAME as club_name,
+        wf.EFFECTIVE_START as start_date,
+        wf.EFFECTIVE_END as end_date
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      JOIN VW_ONT_ORGANIZATION o ON wf.OBJECT_ID = o.ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      WHERE vcl.NAME = 'Real Madrid'
+        AND (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+      ORDER BY role, person_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: premier_league_workforce_breakdown
+    question: How many people work in Premier League clubs broken down by role?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        wf.SUBJECT_CLASS as role,
+        vcl.LEAGUE,
+        COUNT(DISTINCT wf.SUBJECT_ID) as person_count
+      FROM VW_ONT_WORKS_FOR wf
+      JOIN VW_ONT_ORGANIZATION o ON wf.OBJECT_ID = o.ID
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      WHERE vcl.LEAGUE = 'Premier League'
+        AND (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+      GROUP BY wf.SUBJECT_CLASS, vcl.LEAGUE
+      ORDER BY person_count DESC
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: italian_personnel_in_serie_a
+    question: Which Italian people are currently working in Serie A clubs?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT DISTINCT
+        p.SUBTYPE as role,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+        END as person_name,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY
+        END as nationality,
+        vcl.NAME as club_name,
+        vcl.LEAGUE
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      JOIN VW_ONT_ORGANIZATION o ON wf.OBJECT_ID = o.ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      WHERE (
+        (p.SUBTYPE = 'Player' AND vp.NATIONALITY = 'Italy')
+        OR (p.SUBTYPE = 'Coach' AND vc.NATIONALITY = 'Italy')
+      )
+      AND vcl.LEAGUE = 'Serie A'
+      AND (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+      ORDER BY role, person_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # LEVEL 2: Cross-League and International Talent Analysis
+  # =====================================================
+  - name: spanish_talent_abroad
+    question: Which Spanish people are working outside of Spain?
+    sql: |
+      SELECT DISTINCT
+        p.SUBTYPE as role,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+        END as person_name,
+        vcl.NAME as club_name,
+        vcl.COUNTRY as working_country,
+        vcl.LEAGUE,
+        wf.VIA_REL as relationship_type
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      JOIN VW_ONT_ORGANIZATION o ON wf.OBJECT_ID = o.ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      WHERE (
+        (p.SUBTYPE = 'Player' AND vp.NATIONALITY = 'Spain')
+        OR (p.SUBTYPE = 'Coach' AND vc.NATIONALITY = 'Spain')
+      )
+      AND vcl.COUNTRY != 'Spain'
+      AND (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+      ORDER BY working_country, role, person_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: el_clasico_participants
+    question: Show me everyone involved in El Clasico matches - both teams and players
+    sql: |
+      SELECT DISTINCT
+        pi.SUBJECT_CLASS as participant_type,
+        pi.VIA_REL as participation_role,
+        CASE 
+          WHEN pi.SUBJECT_CLASS = 'Player' THEN vp.NAME
+          WHEN pi.SUBJECT_CLASS = 'Club' THEN vcl.NAME
+        END as participant_name,
+        vm.NAME as match_name,
+        vm.EVENT_DATE as match_date
+      FROM VW_ONT_PARTICIPATES_IN pi
+      JOIN VW_ONT_EVENT e ON pi.OBJECT_ID = e.ID
+      LEFT JOIN V_MATCH vm ON e.ID = vm.NODE_ID
+      LEFT JOIN V_PLAYER vp ON pi.SUBJECT_ID = vp.NODE_ID AND pi.SUBJECT_CLASS = 'Player'
+      LEFT JOIN V_CLUB vcl ON pi.SUBJECT_ID = vcl.NODE_ID AND pi.SUBJECT_CLASS = 'Club'
+      WHERE vm.NAME LIKE '%Real Madrid%Barcelona%' 
+         OR vm.NAME LIKE '%Barcelona%Real Madrid%'
+      ORDER BY match_date, participant_type, participation_role, participant_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: argentinian_legends_career_clubs
+    question: Where have Argentinian football legends like Messi worked throughout their careers?
+    sql: |
+      SELECT DISTINCT
+        p.SUBTYPE as role,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+        END as person_name,
+        vcl.NAME as club_name,
+        vcl.COUNTRY,
+        vcl.LEAGUE,
+        wf.EFFECTIVE_START as start_date,
+        wf.EFFECTIVE_END as end_date,
+        DATEDIFF(day, wf.EFFECTIVE_START, COALESCE(wf.EFFECTIVE_END, CURRENT_DATE())) as days_at_club
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      JOIN VW_ONT_ORGANIZATION o ON wf.OBJECT_ID = o.ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      WHERE (
+        (p.SUBTYPE = 'Player' AND vp.NATIONALITY = 'Argentina')
+        OR (p.SUBTYPE = 'Coach' AND vc.NATIONALITY = 'Argentina')
+      )
+      ORDER BY person_name, start_date
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # LEVEL 3: Career Mobility and Transfer Patterns
+  # =====================================================
+  - name: premier_league_to_laliga_moves
+    question: Which people have moved from Premier League to La Liga clubs?
+    sql: |
+      SELECT DISTINCT
+        p.SUBTYPE as role,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+        END as person_name,
+        c1.NAME as previous_club,
+        c1.LEAGUE as previous_league,
+        wf1.EFFECTIVE_END as left_date,
+        c2.NAME as new_club,
+        c2.LEAGUE as new_league,
+        wf2.EFFECTIVE_START as joined_date
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf1 ON p.ID = wf1.SUBJECT_ID
+      JOIN VW_ONT_WORKS_FOR wf2 ON p.ID = wf2.SUBJECT_ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      JOIN V_CLUB c1 ON wf1.OBJECT_ID = c1.NODE_ID
+      JOIN V_CLUB c2 ON wf2.OBJECT_ID = c2.NODE_ID
+      WHERE c1.LEAGUE = 'Premier League'
+        AND c2.LEAGUE = 'La Liga'
+        AND wf1.OBJECT_ID != wf2.OBJECT_ID
+        AND wf2.EFFECTIVE_START > wf1.EFFECTIVE_END
+      ORDER BY joined_date DESC, role, person_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: most_traveled_personnel
+    question: Who are the most well-traveled people in soccer across multiple clubs and countries?
+    sql: |
+      SELECT 
+        p.SUBTYPE as role,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+        END as person_name,
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY
+        END as nationality,
+        COUNT(DISTINCT wf.OBJECT_ID) as total_clubs,
+        COUNT(DISTINCT vcl.COUNTRY) as countries_worked,
+        COUNT(DISTINCT vcl.LEAGUE) as leagues_worked,
+        LISTAGG(DISTINCT vcl.NAME, ', ') WITHIN GROUP (ORDER BY vcl.NAME) as club_history
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON wf.OBJECT_ID = vcl.NODE_ID
+      GROUP BY p.ID, p.SUBTYPE, 
+        CASE WHEN p.SUBTYPE = 'Player' THEN vp.NAME WHEN p.SUBTYPE = 'Coach' THEN vc.NAME END,
+        CASE WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY END
+      HAVING COUNT(DISTINCT wf.OBJECT_ID) >= 3
+      ORDER BY total_clubs DESC, countries_worked DESC, role, person_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: champions_league_participants_2025
+    question: Who participated in the 2025 Champions League matches from all roles?
+    sql: |
+      SELECT DISTINCT
+        pi.SUBJECT_CLASS as participant_type,
+        pi.VIA_REL as participation_role,
+        CASE 
+          WHEN pi.SUBJECT_CLASS = 'Player' THEN vp.NAME
+          WHEN pi.SUBJECT_CLASS = 'Club' THEN vcl.NAME
+        END as participant_name,
+        COUNT(DISTINCT pi.OBJECT_ID) as matches_involved,
+        vm.COMPETITION
+      FROM VW_ONT_PARTICIPATES_IN pi
+      JOIN VW_ONT_EVENT e ON pi.OBJECT_ID = e.ID
+      LEFT JOIN V_MATCH vm ON e.ID = vm.NODE_ID
+      LEFT JOIN V_PLAYER vp ON pi.SUBJECT_ID = vp.NODE_ID AND pi.SUBJECT_CLASS = 'Player'
+      LEFT JOIN V_CLUB vcl ON pi.SUBJECT_ID = vcl.NODE_ID AND pi.SUBJECT_CLASS = 'Club'
+      WHERE vm.COMPETITION = 'Champions League'
+        AND YEAR(vm.EVENT_DATE) = 2025
+      GROUP BY pi.SUBJECT_CLASS, pi.VIA_REL,
+        CASE WHEN pi.SUBJECT_CLASS = 'Player' THEN vp.NAME WHEN pi.SUBJECT_CLASS = 'Club' THEN vcl.NAME END,
+        vm.COMPETITION
+      ORDER BY participant_type, matches_involved DESC, participant_name
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # LEVEL 4: Advanced Analytics and Comparative Analysis
+  # =====================================================
+  - name: league_employment_stability_analysis
+    question: Compare the average tenure of players vs coaches across different leagues
+    sql: |
+      SELECT 
+        vcl.LEAGUE,
+        wf.SUBJECT_CLASS as role,
+        COUNT(*) as total_contracts,
+        COUNT(DISTINCT wf.SUBJECT_ID) as unique_people,
+        AVG(DATEDIFF(day, wf.EFFECTIVE_START, COALESCE(wf.EFFECTIVE_END, CURRENT_DATE()))) as avg_tenure_days,
+        ROUND(AVG(DATEDIFF(day, wf.EFFECTIVE_START, COALESCE(wf.EFFECTIVE_END, CURRENT_DATE()))) / 365.0, 1) as avg_tenure_years,
+        MIN(wf.EFFECTIVE_START) as earliest_contract,
+        MAX(COALESCE(wf.EFFECTIVE_END, CURRENT_DATE())) as latest_contract
+      FROM VW_ONT_WORKS_FOR wf
+      JOIN VW_ONT_ORGANIZATION o ON wf.OBJECT_ID = o.ID
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      WHERE wf.EFFECTIVE_START IS NOT NULL
+        AND vcl.LEAGUE IN ('Premier League', 'La Liga', 'Serie A', 'Bundesliga')
+      GROUP BY vcl.LEAGUE, wf.SUBJECT_CLASS
+      ORDER BY vcl.LEAGUE, role
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: international_talent_distribution
+    question: Which countries export the most football talent to European top leagues?
+    sql: |
+      SELECT 
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY
+        END as nationality,
+        p.SUBTYPE as role,
+        COUNT(DISTINCT p.ID) as people_count,
+        COUNT(DISTINCT wf.OBJECT_ID) as clubs_count,
+        COUNT(DISTINCT vcl.COUNTRY) as countries_working,
+        LISTAGG(DISTINCT vcl.LEAGUE, ', ') WITHIN GROUP (ORDER BY vcl.LEAGUE) as leagues
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON wf.OBJECT_ID = vcl.NODE_ID
+      WHERE (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+        AND vcl.LEAGUE IN ('Premier League', 'La Liga', 'Serie A', 'Bundesliga')
+      GROUP BY 
+        CASE WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY END,
+        p.SUBTYPE
+      ORDER BY people_count DESC, role, nationality
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: cross_nationality_workforce_comparison
+    question: Compare workforce composition across different nationalities
+    sql: |
+      SELECT 
+        CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY
+        END as nationality,
+        wf.SUBJECT_CLASS as role,
+        COUNT(DISTINCT p.ID) as person_count,
+        COUNT(DISTINCT wf.OBJECT_ID) as organizations_served,
+        AVG(DATEDIFF(day, wf.EFFECTIVE_START, COALESCE(wf.EFFECTIVE_END, CURRENT_DATE()))) as avg_tenure_days,
+        COUNT(DISTINCT vcl.LEAGUE) as leagues_represented,
+        LISTAGG(DISTINCT vcl.NAME, ', ') WITHIN GROUP (ORDER BY vcl.NAME) as top_clubs
+      FROM VW_ONT_PERSON p
+      JOIN VW_ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      LEFT JOIN V_CLUB vcl ON wf.OBJECT_ID = vcl.NODE_ID
+      WHERE (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+        AND vcl.LEAGUE IN ('Premier League', 'La Liga', 'Serie A', 'Bundesliga')
+      GROUP BY 
+        CASE WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY END,
+        wf.SUBJECT_CLASS
+      HAVING COUNT(DISTINCT p.ID) >= 2
+      ORDER BY person_count DESC, role, nationality
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  # =====================================================
+  # LEVEL 5: Graph Queries Using REL_RESOLVED (Explicit + Inferred)
+  # =====================================================
+  - name: club_squad_using_inverse_relationships
+    question: Which players does Real Madrid have in their squad?
+    use_as_onboarding_question: true
+    sql: |
+      SELECT 
+        vp.NAME as player_name,
+        vp.POSITION,
+        vp.NATIONALITY,
+        r.EFFECTIVE_START as contract_start,
+        r.EFFECTIVE_END as contract_end,
+        r.SOURCE as relationship_source
+      FROM REL_RESOLVED r
+      JOIN V_CLUB c ON r.SRC_ID = c.NODE_ID
+      JOIN V_PLAYER vp ON r.DST_ID = vp.NODE_ID
+      WHERE c.NAME = 'Real Madrid'
+        AND r.REL_NAME = 'HAS_PLAYER'
+        AND (r.EFFECTIVE_END IS NULL OR r.EFFECTIVE_END >= CURRENT_DATE())
+      ORDER BY vp.POSITION, vp.NAME
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: club_coaching_staff_using_inverse
+    question: Who are the coaches for Manchester City?
+    sql: |
+      SELECT 
+        vc.NAME as coach_name,
+        vc.NATIONALITY,
+        vc.LICENSE_LEVEL,
+        r.EFFECTIVE_START as contract_start,
+        r.EFFECTIVE_END as contract_end,
+        r.SOURCE as relationship_source
+      FROM REL_RESOLVED r
+      JOIN V_CLUB c ON r.SRC_ID = c.NODE_ID
+      JOIN V_COACH vc ON r.DST_ID = vc.NODE_ID
+      WHERE c.NAME = 'Manchester City'
+        AND r.REL_NAME = 'HAS_COACH'
+        AND (r.EFFECTIVE_END IS NULL OR r.EFFECTIVE_END >= CURRENT_DATE())
+      ORDER BY vc.NAME
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: player_match_performance_stats
+    question: What were Kylian Mbappé's match performances?
+    sql: |
+      SELECT 
+        vm.NAME as match_name,
+        vm.EVENT_DATE,
+        vm.COMPETITION,
+        pf.MINUTES_PLAYED,
+        pf.GOALS_SCORED,
+        pf.ASSISTS,
+        pf.YELLOW_CARDS,
+        pf.RED_CARDS
+      FROM V_PLAYER vp
+      JOIN V_PLAYED_IN pf ON vp.NODE_ID = pf.PLAYER_ID
+      JOIN V_MATCH vm ON pf.MATCH_ID = vm.NODE_ID
+      WHERE vp.NAME = 'Kylian Mbappé'
+      ORDER BY vm.EVENT_DATE DESC
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+  - name: club_diversity_index
+    question: Which clubs have the most diverse international workforce?
+    sql: |
+      SELECT 
+        vcl.NAME as club_name,
+        vcl.COUNTRY as club_country,
+        vcl.LEAGUE,
+        COUNT(DISTINCT p.ID) as total_personnel,
+        COUNT(DISTINCT CASE 
+          WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY 
+          WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY 
+        END) as unique_nationalities,
+        COUNT(DISTINCT CASE WHEN p.SUBTYPE = 'Player' THEN p.ID END) as player_count,
+        COUNT(DISTINCT CASE WHEN p.SUBTYPE = 'Coach' THEN p.ID END) as coach_count,
+        LISTAGG(DISTINCT 
+          CASE WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY END, 
+          ', '
+        ) WITHIN GROUP (ORDER BY 
+          CASE WHEN p.SUBTYPE = 'Player' THEN vp.NATIONALITY WHEN p.SUBTYPE = 'Coach' THEN vc.NATIONALITY END
+        ) as all_nationalities
+      FROM VW_ONT_ORGANIZATION o
+      JOIN VW_ONT_WORKS_FOR wf ON o.ID = wf.OBJECT_ID
+      JOIN VW_ONT_PERSON p ON wf.SUBJECT_ID = p.ID
+      LEFT JOIN V_CLUB vcl ON o.ID = vcl.NODE_ID
+      LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+      LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+      WHERE (wf.EFFECTIVE_END IS NULL OR wf.EFFECTIVE_END >= CURRENT_DATE())
+      GROUP BY vcl.NAME, vcl.COUNTRY, vcl.LEAGUE
+      ORDER BY unique_nationalities DESC, total_personnel DESC
+    verified_by: Soccer Knowledge Graph Ontology Model
+    verified_at: 1747672000
+
+custom_instructions: |-
+  ONTOLOGY SEMANTIC MODEL USAGE GUIDE:
+  
+  This semantic model provides abstract, cross-type querying capabilities through ontology views.
+  Use this model when queries span multiple concrete entity types or when reasoning at a higher abstraction level.
+  
+  WHEN TO USE THIS ONTOLOGY MODEL:
+  1. Queries about "people", "persons", "individuals", "personnel" (abstract, type-agnostic)
+  2. Queries about "organizations" (spanning clubs and other organizational entities)
+  3. Queries about "events" (spanning matches, tournaments, etc.)
+  4. Queries about "employment", "working for", "affiliation" across person types
+  5. Queries about "participation", "involvement" in events
+  6. Cross-type analysis (e.g., "all people working in Spanish organizations")
+  7. Abstract pattern discovery (e.g., "employment duration by person type")
+  8. Career mobility and transfer patterns
+  9. International talent distribution
+  10. Workforce diversity and composition analysis
+  
+  ONTOLOGY ARCHITECTURE:
+  - Abstract Classes: ONT_PERSON, ONT_ORGANIZATION, ONT_EVENT
+  - Abstract Relations: ONT_WORKS_FOR, ONT_PARTICIPATES_IN, ONT_AFFILIATED_WITH
+  - All ontology views are DYNAMICALLY GENERATED from metadata tables using SP_GENERATE_ONTOLOGY_VIEWS()
+  - Views automatically union concrete views based on ONT_CLASS_MAP and ONT_REL_MAP metadata
+  - SUBTYPE column distinguishes concrete types within abstract classes (e.g., Player vs Coach in ONT_PERSON)
+  - VIA_REL column identifies the concrete relationship (e.g., plays_for vs coaches in ONT_WORKS_FOR)
+  - SRC_VIEW column tracks the source concrete view for provenance
+  
+  QUERY PATTERNS:
+  1. Direct ontology queries: SELECT from ONT_* views for abstract cross-type analysis
+  2. **ATTRIBUTE ENRICHMENT (CRITICAL)**: ALWAYS join ontology views to concrete views for detailed attributes
+  3. Filter by SUBTYPE: Use SUBTYPE column to filter to specific concrete types within abstract class
+  4. Filter by VIA_REL: Use VIA_REL column to filter to specific concrete relationships
+  5. Aggregate by type: GROUP BY SUBTYPE or VIA_REL for cross-type summaries
+  6. Graph queries: Use REL_RESOLVED for explicit + inferred relationships (includes inverses like HAS_PLAYER)
+  
+  ATTRIBUTE ENRICHMENT REQUIREMENTS:
+  ⚠️ IMPORTANT: Ontology views (ONT_*) only contain structural columns (ID, SUBTYPE, SRC_VIEW).
+  To get actual attributes like names, nationalities, dates, etc., you MUST join to concrete views:
+  
+  - ONT_PERSON → LEFT JOIN V_PLAYER (when SUBTYPE='Player') for NAME, POSITION, NATIONALITY, BIRTHDATE
+  - ONT_PERSON → LEFT JOIN V_COACH (when SUBTYPE='Coach') for NAME, NATIONALITY, LICENSE_LEVEL
+  - ONT_ORGANIZATION → LEFT JOIN V_CLUB (when SUBTYPE='Club') for NAME, LEAGUE, COUNTRY, STADIUM
+  - ONT_EVENT → LEFT JOIN V_MATCH (when SUBTYPE='Match') for NAME, EVENT_DATE, VENUE, COMPETITION
+  - ONT_PARTICIPATES_IN → LEFT JOIN V_PLAYED_IN for GOALS_SCORED, ASSISTS, MINUTES_PLAYED
+  
+  ENRICHMENT PATTERN EXAMPLE:
+  ```sql
+  SELECT 
+    p.SUBTYPE as role,
+    CASE 
+      WHEN p.SUBTYPE = 'Player' THEN vp.NAME
+      WHEN p.SUBTYPE = 'Coach' THEN vc.NAME
+    END as person_name,
+    vcl.NAME as club_name
+  FROM ONT_PERSON p
+  JOIN ONT_WORKS_FOR wf ON p.ID = wf.SUBJECT_ID
+  LEFT JOIN V_PLAYER vp ON p.ID = vp.NODE_ID AND p.SUBTYPE = 'Player'
+  LEFT JOIN V_COACH vc ON p.ID = vc.NODE_ID AND p.SUBTYPE = 'Coach'
+  LEFT JOIN V_CLUB vcl ON wf.OBJECT_ID = vcl.NODE_ID
+  ```
+  
+  RELATIONSHIP PATTERNS:
+  - ONT_WORKS_FOR unions: plays_for (Player→Club) + coaches (Coach→Club)
+  - ONT_PARTICIPATES_IN unions: played_in (Player→Match) + home_team (Club→Match) + away_team (Club→Match)
+  - ONT_AFFILIATED_WITH unions: plays_for (Player→Club) + coaches (Coach→Club)
+  - REL_RESOLVED: Contains EXPLICIT relationships + INVERSE relationships (e.g., PLAYS_FOR + HAS_PLAYER)
+  
+  TIME-BASED QUERIES:
+  - Use EFFECTIVE_START and EFFECTIVE_END for temporal filtering
+  - NULL EFFECTIVE_END indicates current/active relationships
+  - Filter for active: WHERE EFFECTIVE_END IS NULL OR EFFECTIVE_END >= CURRENT_DATE()
+  - Calculate duration: DATEDIFF(day, EFFECTIVE_START, COALESCE(EFFECTIVE_END, CURRENT_DATE()))
+  
+  INVERSE RELATIONSHIP QUERIES:
+  - Use REL_RESOLVED to query inverse relationships
+  - HAS_PLAYER (Club→Player) is the inverse of PLAYS_FOR (Player→Club)
+  - HAS_COACH (Club→Coach) is the inverse of COACHES (Coach→Club)
+  - Filter by SOURCE='INVERSE' to see only inferred relationships
+  - Example: "Which players does Real Madrid have?" uses HAS_PLAYER relationship
+  
+  BEST PRACTICES:
+  - Prefer ontology views when user intent is abstract (e.g., "all people" not "all players and coaches")
+  - Use SUBTYPE and VIA_REL for drill-down from abstract to concrete
+  - Leverage SRC_VIEW for provenance tracking and debugging
+  - Join to concrete views (V_PLAYER, V_COACH, V_CLUB) to access detailed attributes not in ontology views
+  - Use GROUP BY SUBTYPE or VIA_REL for cross-type comparisons and analytics
+  - Use REL_RESOLVED for bidirectional relationship queries (especially useful for "who does X have" questions)
+  - For match statistics, use V_PLAYED_IN with joins to V_PLAYER and V_MATCH
+
+module_custom_instructions:
+  sql_generation: |-
+    Ontology SQL Generation Rules:
+    
+    1. ABSTRACT CLASS VIEWS (ONT_*):
+       - ONT_PERSON: Use for queries about "people", "personnel", "individuals" (unions Player + Coach)
+       - ONT_ORGANIZATION: Use for queries about "organizations" (unions Club)
+       - ONT_EVENT: Use for queries about "events" (unions Match)
+    
+    2. ABSTRACT RELATIONSHIP VIEWS:
+       - ONT_WORKS_FOR: Person works for Organization (VIA_REL: PLAYS_FOR or COACHES)
+       - ONT_PARTICIPATES_IN: Entity participates in Event (VIA_REL: PLAYED_IN only)
+       - ONT_AFFILIATED_WITH: Organization affiliated with Event (VIA_REL: HOME_TEAM or AWAY_TEAM)
+    
+    3. ATTRIBUTE ENRICHMENT (MANDATORY):
+       - Ontology views only have: ID, SUBTYPE, SRC_VIEW
+       - For attributes (NAME, NATIONALITY, etc.): JOIN to concrete views
+       - Use CASE WHEN SUBTYPE = 'X' pattern for polymorphic attribute access
+    
+    4. FILTERING PATTERNS:
+       - Use pre-defined filters: players_only, coaches_only, active_relationships
+       - Filter by SUBTYPE for concrete type within abstract class
+       - Filter by VIA_REL for concrete relationship type
+    
+    5. AGGREGATION PATTERNS:
+       - Use pre-defined metrics: entity_count, relationship_count, active_relationship_count
+       - GROUP BY SUBTYPE for cross-type summaries
+       - GROUP BY VIA_REL for relationship type breakdowns
+  
+  question_categorization: |-
+    Treat the following as UNAMBIGUOUS_SQL for ontology queries:
+    - "All people/personnel at [club]" → ONT_PERSON + ONT_WORKS_FOR
+    - "How many [role type] work in [league]" → ONT_WORKS_FOR with SUBTYPE grouping
+    - "International workforce/diversity" → ONT_PERSON with nationality analysis
+    - "Employment duration/tenure" → ONT_WORKS_FOR with temporal calculations
+    - Cross-type questions spanning players AND coaches → Use abstract views

@@ -1,0 +1,11 @@
+{
+  "last_updated": "2025-10-30T22:22:09.727889",
+  "source": "soccer_knowledge_graph.sql",
+  "total_players": 41,
+  "total_coaches": 11,
+  "total_clubs": 15,
+  "total_matches": 20,
+  "total_player_contracts": 85,
+  "total_coach_contracts": 25,
+  "total_match_appearances": 53
+}
