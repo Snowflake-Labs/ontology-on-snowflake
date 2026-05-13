@@ -25,9 +25,15 @@ USE SCHEMA SOCCER_KG;
 -- Create stage for loading data files
 -- =====================================================
 CREATE OR REPLACE STAGE SOCCER_DATA_STAGE
-    FILE_FORMAT = (TYPE = 'JSON');
+    FILE_FORMAT = (TYPE = 'JSON' STRIP_OUTER_ARRAY = TRUE);
 
--- Upload the JSON files to the stage using:
+-- Load data files into the stage.
+-- Option A: From Snowflake Workspace (Notebooks / Git integration)
+COPY FILES INTO @ONTOLOGY_DB.SOCCER_KG.SOCCER_DATA_STAGE
+FROM 'snow://workspace/USER$.PUBLIC."ontology-on-snowflake"/versions/live/data'
+FILES=('clubs.json', 'coach_contracts.json', 'match_appearances.json', 'matches.json', 'persons.json', 'player_contracts.json');
+
+-- Option B: Upload from local filesystem using SnowSQL / Snow CLI
 -- PUT file:///path/to/clubs.json @SOCCER_DATA_STAGE;
 -- PUT file:///path/to/persons.json @SOCCER_DATA_STAGE;
 -- PUT file:///path/to/player_contracts.json @SOCCER_DATA_STAGE;
