@@ -187,16 +187,18 @@ INSERT INTO ACT_DEF (ACTION_TYPE_ID, PARAM_NAME, PARAM_TYPE, IS_REQUIRED, DESCRI
 -- =====================================================
 -- FUNCTIONS
 -- =====================================================
-INSERT INTO ONT_FUNCTION (ONTOLOGY_NAME, FUNCTION_NAME, VERSION, LANGUAGE, SNOWFLAKE_REF, DESCRIPTION, INPUT_SCHEMA, OUTPUT_SCHEMA) VALUES
-('SOCCER_V1', 'calculate_age', '1.0', 'SQL', 'FN_CALCULATE_AGE', 'Calculate age from birthdate', 
+INSERT INTO ONT_FUNCTION (ONTOLOGY_NAME, FUNCTION_NAME, VERSION, LANGUAGE, SNOWFLAKE_REF, DESCRIPTION, INPUT_SCHEMA, OUTPUT_SCHEMA)
+SELECT 'SOCCER_V1', 'calculate_age', '1.0', 'SQL', 'FN_CALCULATE_AGE', 'Calculate age from birthdate', 
  PARSE_JSON('{"birthdate": "DATE"}'), 
- PARSE_JSON('{"age": "INTEGER"}')),
-('SOCCER_V1', 'graph_shortest_path', '1.0', 'PYTHON', 'SP_GRAPH_SHORTEST_PATH', 'Find shortest path between two nodes',
+ PARSE_JSON('{"age": "INTEGER"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'graph_shortest_path', '1.0', 'PYTHON', 'SP_GRAPH_SHORTEST_PATH', 'Find shortest path between two nodes',
  PARSE_JSON('{"source_id": "STRING", "target_id": "STRING", "rel_types": "ARRAY"}'),
- PARSE_JSON('{"path": "ARRAY", "length": "INTEGER"}')),
-('SOCCER_V1', 'graph_centrality', '1.0', 'PYTHON', 'SP_GRAPH_CENTRALITY', 'Calculate centrality metrics for nodes',
+ PARSE_JSON('{"path": "ARRAY", "length": "INTEGER"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'graph_centrality', '1.0', 'PYTHON', 'SP_GRAPH_CENTRALITY', 'Calculate centrality metrics for nodes',
  PARSE_JSON('{"centrality_type": "STRING", "node_type": "STRING"}'),
- PARSE_JSON('{"results": "ARRAY"}'));
+ PARSE_JSON('{"results": "ARRAY"}');
 
 INSERT INTO ONT_FUNCTION_BINDING (ONTOLOGY_NAME, FUNCTION_NAME, VERSION, BOUND_TO_KIND, BOUND_TO_NAME) VALUES
 ('SOCCER_V1', 'calculate_age', '1.0', 'OBJECT_TYPE', 'Player'),
@@ -246,34 +248,42 @@ INSERT INTO ONT_PERMISSION (ONTOLOGY_NAME, SUBJECT_KIND, SUBJECT_NAME, ONT_ROLE_
 -- =====================================================
 -- OBJECT VIEW DEFINITIONS (for governance)
 -- =====================================================
-INSERT INTO OBJ_VIEW_DEF (OBJ_TYPE, VIEW_NAME, CREATED_BY, DESCRIPTION, DISPLAY_COLS) VALUES
-('Player', 'V_PLAYER', 'SYSTEM', 'Standard player view', ARRAY_CONSTRUCT('NAME', 'POSITION', 'NATIONALITY')),
-('Coach', 'V_COACH', 'SYSTEM', 'Standard coach view', ARRAY_CONSTRUCT('NAME', 'NATIONALITY', 'LICENSE_LEVEL')),
-('Club', 'V_CLUB', 'SYSTEM', 'Standard club view', ARRAY_CONSTRUCT('NAME', 'COUNTRY', 'LEAGUE')),
-('Match', 'V_MATCH', 'SYSTEM', 'Standard match view', ARRAY_CONSTRUCT('NAME', 'EVENT_DATE', 'COMPETITION'));
+INSERT INTO OBJ_VIEW_DEF (OBJ_TYPE, VIEW_NAME, CREATED_BY, DESCRIPTION, DISPLAY_COLS)
+SELECT 'Player', 'V_PLAYER', 'SYSTEM', 'Standard player view', ARRAY_CONSTRUCT('NAME', 'POSITION', 'NATIONALITY')
+UNION ALL
+SELECT 'Coach', 'V_COACH', 'SYSTEM', 'Standard coach view', ARRAY_CONSTRUCT('NAME', 'NATIONALITY', 'LICENSE_LEVEL')
+UNION ALL
+SELECT 'Club', 'V_CLUB', 'SYSTEM', 'Standard club view', ARRAY_CONSTRUCT('NAME', 'COUNTRY', 'LEAGUE')
+UNION ALL
+SELECT 'Match', 'V_MATCH', 'SYSTEM', 'Standard match view', ARRAY_CONSTRUCT('NAME', 'EVENT_DATE', 'COMPETITION');
 
 -- =====================================================
 -- OBJECT SOURCE MAPPINGS
 -- =====================================================
-INSERT INTO ONT_OBJECT_SOURCE (ONTOLOGY_NAME, OBJ_TYPE, SOURCE_TABLE, FILTER_SQL, MAPPING) VALUES
-('SOCCER_V1', 'Player', 'KG_NODE', 'NODE_TYPE = ''PLAYER''', 
- PARSE_JSON('{"NODE_ID": "id", "PROPS:NAME": "name", "PROPS:POSITION": "position"}')),
-('SOCCER_V1', 'Coach', 'KG_NODE', 'NODE_TYPE = ''COACH''',
- PARSE_JSON('{"NODE_ID": "id", "PROPS:NAME": "name", "PROPS:LICENSE_LEVEL": "license_level"}')),
-('SOCCER_V1', 'Club', 'KG_NODE', 'NODE_TYPE = ''CLUB''',
- PARSE_JSON('{"NODE_ID": "id", "PROPS:CLUB_NAME": "name", "PROPS:COUNTRY": "country"}')),
-('SOCCER_V1', 'Match', 'KG_NODE', 'NODE_TYPE = ''MATCH''',
- PARSE_JSON('{"NODE_ID": "id", "PROPS:MATCH_NAME": "name", "PROPS:EVENT_DATE": "event_date"}'));
+INSERT INTO ONT_OBJECT_SOURCE (ONTOLOGY_NAME, OBJ_TYPE, SOURCE_TABLE, FILTER_SQL, MAPPING)
+SELECT 'SOCCER_V1', 'Player', 'KG_NODE', 'NODE_TYPE = ''PLAYER''', 
+ PARSE_JSON('{"NODE_ID": "id", "PROPS:NAME": "name", "PROPS:POSITION": "position"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'Coach', 'KG_NODE', 'NODE_TYPE = ''COACH''',
+ PARSE_JSON('{"NODE_ID": "id", "PROPS:NAME": "name", "PROPS:LICENSE_LEVEL": "license_level"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'Club', 'KG_NODE', 'NODE_TYPE = ''CLUB''',
+ PARSE_JSON('{"NODE_ID": "id", "PROPS:CLUB_NAME": "name", "PROPS:COUNTRY": "country"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'Match', 'KG_NODE', 'NODE_TYPE = ''MATCH''',
+ PARSE_JSON('{"NODE_ID": "id", "PROPS:MATCH_NAME": "name", "PROPS:EVENT_DATE": "event_date"}');
 
 -- =====================================================
 -- LINK SOURCE MAPPINGS
 -- =====================================================
-INSERT INTO ONT_LINK_SOURCE (ONTOLOGY_NAME, LINK_TYPE, SOURCE_TABLE, FILTER_SQL, MAPPING) VALUES
-('SOCCER_V1', 'PLAYS_FOR', 'KG_EDGE', 'EDGE_TYPE = ''PLAYS_FOR''',
- PARSE_JSON('{"SRC_ID": "player_id", "DST_ID": "club_id", "EFFECTIVE_START": "start_date"}')),
-('SOCCER_V1', 'COACHES', 'KG_EDGE', 'EDGE_TYPE = ''COACHES''',
- PARSE_JSON('{"SRC_ID": "coach_id", "DST_ID": "club_id", "EFFECTIVE_START": "start_date"}')),
-('SOCCER_V1', 'PLAYED_IN', 'KG_EDGE', 'EDGE_TYPE = ''PLAYED_IN''',
- PARSE_JSON('{"SRC_ID": "player_id", "DST_ID": "match_id", "PROPS:GOALS_SCORED": "goals"}'));
+INSERT INTO ONT_LINK_SOURCE (ONTOLOGY_NAME, LINK_TYPE, SOURCE_TABLE, FILTER_SQL, MAPPING)
+SELECT 'SOCCER_V1', 'PLAYS_FOR', 'KG_EDGE', 'EDGE_TYPE = ''PLAYS_FOR''',
+ PARSE_JSON('{"SRC_ID": "player_id", "DST_ID": "club_id", "EFFECTIVE_START": "start_date"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'COACHES', 'KG_EDGE', 'EDGE_TYPE = ''COACHES''',
+ PARSE_JSON('{"SRC_ID": "coach_id", "DST_ID": "club_id", "EFFECTIVE_START": "start_date"}')
+UNION ALL
+SELECT 'SOCCER_V1', 'PLAYED_IN', 'KG_EDGE', 'EDGE_TYPE = ''PLAYED_IN''',
+ PARSE_JSON('{"SRC_ID": "player_id", "DST_ID": "match_id", "PROPS:GOALS_SCORED": "goals"}');
 
 COMMIT;
